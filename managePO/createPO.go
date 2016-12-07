@@ -324,7 +324,8 @@ errors.New("Expecting integer value for asset holding")
 	//check if marble already exists
 	err = stub.PutState(po.transID, []byte(order))			//making a test var "abc", I find it handy to read/write to it right away to test the network
 	if err != nil {
-		fmt.Println("error while storing data"+ err)
+		fmt.Println("error while storing data")
+		fmt.Println(err)
 		return nil, err
 	}
 	/*marbleAsBytes, err := stub.GetState(name)
