@@ -266,7 +266,6 @@ func (t *CreatePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if len(args) != 9 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
-errors.New("Expecting integer value for asset holding")
 	//input sanitation
 	fmt.Println("- start create_po")
 	if len(args[0]) <= 0 {
