@@ -87,9 +87,6 @@ func (t *CreatePO) Init(stub shim.ChaincodeStubInterface, function string, args 
 
 	var err error
 
-	if len(args) != 9 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 9")
-	}
 	// Initialize the chaincode
 	
 	msg = args[0]
@@ -325,7 +322,7 @@ func (t *CreatePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 			`}`
 
 	//check if marble already exists
-	err = stub.PutState("_POindex", []byte(order))			//making a test var "abc", I find it handy to read/write to it right away to test the network
+	err = stub.PutState(po.transID, []byte(order))			//making a test var "abc", I find it handy to read/write to it right away to test the network
 	if err != nil {
 		return nil, err
 	}
