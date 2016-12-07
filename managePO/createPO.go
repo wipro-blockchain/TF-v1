@@ -188,7 +188,7 @@ func (t *CreatePO) display_po(stub shim.ChaincodeStubInterface, args []string) (
 	transID = args[0]
 	valAsbytes, err := stub.GetState(transID)									//get the var from chaincode state
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + ID + "\"}"
+		jsonResp = "{\"Error\":\"Failed to get state for " + transID + "\"}"
 		return nil, errors.New(jsonResp)
 	}
 
@@ -339,12 +339,12 @@ errors.New("Expecting integer value for asset holding")
 	}
 		
 	//get the PO index
-	poAsBytes, err := stub.GetState(POIndexStr)
+	poIndexAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
 	var poIndex []string
-	json.Unmarshal(poAsBytes, &poIndex)							//un stringify it aka JSON.parse()
+	json.Unmarshal(poIndexAsBytes, &poIndex)							//un stringify it aka JSON.parse()
 	
 	//append
 	poIndex = append(poIndex, po.transID)									//add PO transID to index list
