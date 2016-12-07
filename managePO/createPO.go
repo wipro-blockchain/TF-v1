@@ -178,15 +178,15 @@ func (t *CreatePO) Query(stub shim.ChaincodeStubInterface, function string, args
 // display_po - display PO details for a specific ID from chaincode state
 // ============================================================================================================================
 func (t *CreatePO) display_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var ID, jsonResp string
+	var transID, jsonResp string
 	var err error
 
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
 	}
 
-	ID = args[0]
-	valAsbytes, err := stub.GetState(ID)									//get the var from chaincode state
+	transID = args[0]
+	valAsbytes, err := stub.GetState(transID)									//get the var from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + ID + "\"}"
 		return nil, errors.New(jsonResp)
@@ -256,7 +256,7 @@ func (t *CreatePO) display_po(stub shim.ChaincodeStubInterface, args []string) (
 }*/
 
 // ============================================================================================================================
-// Init Marble - create a new marble, store into chaincode state
+// Init PO - create a new PO, store into chaincode state
 // ============================================================================================================================
 func (t *CreatePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
@@ -309,6 +309,19 @@ errors.New("Expecting integer value for asset holding")
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
 	
+	poAsBytes, err := stub.GetState(po.transID)
+	if err != nil {
+		return nil, errors.New("Failed to get PO transID")
+	}
+	res := PO{}
+	json.Unmarshal(poAsBytes, &res)
+	if res.transID == po.transID{
+		fmt.Println("This PO arleady exists: " + po.transID)
+		fmt.Println(res);
+		return nil, errors.New("This PO arleady exists")				//all stop a marble by this name exists
+	}
+	
+	//build the PO json string manually
 	order := 	`{`+
 			`"transId": "` + po.transID + `" , `+
 			`"sellerName": "` + po.sellerName + `" , `+
@@ -320,53 +333,31 @@ errors.New("Expecting integer value for asset holding")
 			`"name": "` + po.items[0].Name + `" , `+ 
 			`"quantity": "` +  strconv.Itoa(po.items[0].Quantity) + `" `+ 
 			`}`
-
-	//check if marble already exists
-	err = stub.PutState(po.transID, []byte(order))			//making a test var "abc", I find it handy to read/write to it right away to test the network
-	if err != nil {
-		fmt.Println("error while storing data")
-		fmt.Println(err)
-		return nil, err
-	}
-	/*marbleAsBytes, err := stub.GetState(name)
-	if err != nil {
-		return nil, errors.New("Failed to get marble name")
-	}
-	res := Marble{}
-	json.Unmarshal(marbleAsBytes, &res)
-	if res.Name == name{
-		fmt.Println("This marble arleady exists: " + name)
-		fmt.Println(res);
-		return nil, errors.New("This marble arleady exists")				//all stop a marble by this name exists
-	}
-	
-	//build the marble json string manually
-	str := `{"name": "` + name + `", "color": "` + color + `", "size": ` + strconv.Itoa(size) + `, "user": "` + user + `"}`
-	err = stub.PutState(name, []byte(str))									//store marble with id as key
+	err = stub.PutState(po.transID, []byte(order))									//store PO with id as key
 	if err != nil {
 		return nil, err
 	}
 		
-	//get the marble index
-	marblesAsBytes, err := stub.GetState(POIndexStr)
+	//get the PO index
+	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
-		return nil, errors.New("Failed to get marble index")
+		return nil, errors.New("Failed to get PO index")
 	}
-	var marbleIndex []string
-	json.Unmarshal(marblesAsBytes, &marbleIndex)							//un stringify it aka JSON.parse()
+	var poIndex []string
+	json.Unmarshal(poAsBytes, &poIndex)							//un stringify it aka JSON.parse()
 	
 	//append
-	marbleIndex = append(marbleIndex, name)									//add marble name to index list
-	fmt.Println("! marble index: ", marbleIndex)
-	jsonAsBytes, _ := json.Marshal(marbleIndex)
-	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of marble*/
+	poIndex = append(poIndex, po.transID)									//add PO transID to index list
+	fmt.Println("! PO index: ", poIndex)
+	jsonAsBytes, _ := json.Marshal(poIndex)
+	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of PO
 
 	fmt.Println("- end create PO")
 	return nil, nil
 }
 
 // ============================================================================================================================
-// Set User Permission on Marble
+// Set User Permission on PO
 // ============================================================================================================================
 /*func (t *CreatePO) set_user(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
