@@ -266,7 +266,7 @@ func (t *CreatePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if len(args) != 9 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
-
+errors.New("Expecting integer value for asset holding")
 	//input sanitation
 	fmt.Println("- start create_po")
 	if len(args[0]) <= 0 {
@@ -324,6 +324,7 @@ func (t *CreatePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	//check if marble already exists
 	err = stub.PutState(po.transID, []byte(order))			//making a test var "abc", I find it handy to read/write to it right away to test the network
 	if err != nil {
+		fmt.Println("error while storing data"+ err)
 		return nil, err
 	}
 	/*marbleAsBytes, err := stub.GetState(name)
