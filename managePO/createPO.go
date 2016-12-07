@@ -136,8 +136,8 @@ func (t *CreatePO) Invoke(stub shim.ChaincodeStubInterface, function string, arg
 	// Handle different functions
 	if function == "init" {													//initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
-	} else if function == "display_po" {										//deletes an entity from its state
-		return t.display_po(stub, args)
+	//} else if function == "display_po" {										//deletes an entity from its state
+		//return t.display_po(stub, args)
 		//cleanTrades(stub)													//lets make sure all open trades are still valid
 		//return res, err
 	} else if function == "create_po" {											//writes a value to the chaincode state
