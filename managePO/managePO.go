@@ -254,12 +254,13 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		return nil, errors.New("Failed to get PO index")
 	}
 	var errResp string
-	var poJson2 []string
+	//var poJson2 []string
 	var poJson []string
-	var poAsBytes2 []byte
+	//var poAsBytes2 []byte
 	fmt.Println("poAsBytes")
 	fmt.Println(poAsBytes)
 	var poIndex []string
+	var poIndex2 []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
 	fmt.Println("poIndex")
 	fmt.Println(poIndex)
@@ -270,17 +271,17 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		json.Unmarshal(poAsBytes, &poJson)
+		json.Unmarshal(poAsBytes, &poIndex2)
 		fmt.Println("************* individual PO" )
-		fmt.Println(poJson) 
-		for j,val2 := range poJson{
+		fmt.Println(poIndex2) 
+		for j,val2 := range poIndex2{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + val2 + " for all PO")
-			poAsBytes2, err := stub.GetState(val2)
+			poAsBytes, err := stub.GetState(val2)
 			if err != nil {
 				errResp = "{\"Error\":\"Failed to get state for " + val2 + "\"}"
 				return nil, errors.New(errResp)
 			}
-			json.Unmarshal(poAsBytes2, &poJson2)
+			json.Unmarshal(poAsBytes, &poJson)
 		}
 		/*fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		poIndex = append(poIndex[:i], poIndex[i+1:]...)	
@@ -290,7 +291,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			fmt.Println(string(x) + " - " + poIndex[x])
 		}*/
 	}
-	return poAsBytes2, nil													//send it onward
+	return poAsBytes, nil													//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
