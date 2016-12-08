@@ -295,7 +295,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		}
 	}*/
 	valAsbytes, err := stub.GetState(poIndex[0])	
-	jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
+	jsonResp = jsonResp + "\""+ poIndex[0] + "\":" + string(valAsbytes[:])
 	jsonResp = jsonResp + "}"
 	
 	return []byte(jsonResp), nil													//send it onward
