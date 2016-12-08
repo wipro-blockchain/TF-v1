@@ -255,10 +255,10 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	var errResp string
 	//var poJson2 []string
-	var poJson []string
+	//var poJson []string
 	//var poAsBytes2 []byte
-	fmt.Println("poAsBytes")
-	fmt.Println(poAsBytes)
+	//fmt.Println("poAsBytes")
+	//fmt.Println(poAsBytes)
 	var poIndex []string
 	var poIndex2 []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
@@ -272,17 +272,6 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			return nil, errors.New(errResp)
 		}
 		json.Unmarshal(poAsBytes, &poIndex2)
-		fmt.Println("************* individual PO" )
-		fmt.Println(poIndex2) 
-		for j,val2 := range poIndex2{
-			fmt.Println(strconv.Itoa(j) + " - looking at " + val2 + " for all PO")
-			poAsBytes, err := stub.GetState(val2)
-			if err != nil {
-				errResp = "{\"Error\":\"Failed to get state for " + val2 + "\"}"
-				return nil, errors.New(errResp)
-			}
-			json.Unmarshal(poAsBytes, &poJson)
-		}
 		/*fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		poIndex = append(poIndex[:i], poIndex[i+1:]...)	
 		fmt.Println("poIndex in for loop: ")
@@ -291,7 +280,24 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			fmt.Println(string(x) + " - " + poIndex[x])
 		}*/
 	}
-	return poAsBytes, nil													//send it onward
+	var jsonResp string
+	jsonResp = "{"
+	for i,val :=range poIndex2{
+		valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
+		
+		if i != 0 {
+			jsonResp = jsonResp + ","
+		}
+		
+	}
+	jsonResp = "}"
+	
+	return []byte(jsonResp), nil													//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
