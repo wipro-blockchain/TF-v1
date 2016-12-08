@@ -271,6 +271,14 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		json.Unmarshal(poAsBytes, &poJson)
 		fmt.Println("************* individual PO" )
 		fmt.Println(poJson) 
+		for j,val2 := range poJson{
+			poAsBytes2, err := stub.GetState(val2)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val2 + "\"}"
+				return nil, errors.New(errResp)
+			}
+			json.Unmarshal(poAsBytes2, &poJson2)
+		}
 		/*fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		poIndex = append(poIndex[:i], poIndex[i+1:]...)	
 		fmt.Println("poIndex in for loop: ")
@@ -279,7 +287,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			fmt.Println(string(x) + " - " + poIndex[x])
 		}*/
 	}
-	return poAsBytes, nil													//send it onward
+	return poAsBytes2, nil													//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
