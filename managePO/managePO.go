@@ -253,13 +253,16 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
+	fmt.Println("poAsBytes")
+	fmt.Println(poAsBytes)
 	var poIndex []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	
+	fmt.Println("poIndex")
+	fmt.Println(poIndex)
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		poIndex = append(poIndex[:i], poIndex[i+1:]...)	
-		fmt.Println("poIndex: ")
+		fmt.Println("poIndex in for loop: ")
 		fmt.Println(poIndex)
 		for x:= range poIndex{											//debug prints...
 			fmt.Println(string(x) + " - " + poIndex[x])
@@ -286,9 +289,12 @@ func (t *ManagePO) delete_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get marble index")
 	}
+	fmt.Println("poAsBytes in delete po")
+	fmt.Println(poAsBytes);
 	var poIndex []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	
+	fmt.Println("poIndex in delete po")
+	fmt.Println(poIndex);
 	//remove marble from index
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for " + transId)
@@ -434,6 +440,8 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO transID")
 	}
+	fmt.Println("poAsBytes in create_po")
+	fmt.Println(poAsBytes);
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
@@ -464,15 +472,20 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
+	fmt.Println("poIndexAsBytes in create_po")
+	fmt.Println(poIndexAsBytes);
 	var poIndex []string
 	json.Unmarshal(poIndexAsBytes, &poIndex)							//un stringify it aka JSON.parse()
 	
 	//append
 	poIndex = append(poIndex, transId)									//add PO transID to index list
+	fmt.Println("poIndex in create_po after append")
+	fmt.Println(poIndex);
 	fmt.Println("! PO index: ", poIndex)
 	jsonAsBytes, _ := json.Marshal(poIndex)
 	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of PO
-
+	fmt.Println("jsonAsBytes in create_po after PutState(POIndexStr ")
+	fmt.Println(jsonAsBytes);
 	fmt.Println("- end create PO")
 	return nil, nil
 }
