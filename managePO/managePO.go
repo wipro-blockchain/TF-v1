@@ -291,20 +291,16 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			return nil, errors.New(jsonResp)
 		}
 		jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
-		fmt.Println(jsonResp + "\""+ val + "\":" + string(valAsbytes[:]))
+		
 		if i != 0 {
 			jsonResp = jsonResp + ","
 		}
-		if i == len(poIndex2){
-			jsonResp = jsonResp + "}"
-			return []byte(jsonResp), nil			
-		}
-		
+		jsonResp = fmt.Sprintln(jsonResp)		
 	}
 	
 	//valAsbytes, err := stub.GetState(poIndex[0])	
 	//jsonResp = jsonResp + "\""+ poIndex[0] + "\":" + string(valAsbytes[:])
-	
+	jsonResp = jsonResp + "}"
 	return []byte(jsonResp), nil
 											//send it onward
 }
