@@ -48,7 +48,7 @@ type PO struct{
 	Item_name string `json:"item_name"`
 	Item_quantity int `json:"item_quantity"`
 }
-
+var jsonResp string
 /*type allPO struct{
 	all_po []PO `json:"all_PO"`
 }*/
@@ -262,7 +262,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	//fmt.Println(poAsBytes)
 	var poIndex []string
 	var poIndex2 []string
-	var jsonResp string
+	//var jsonResp string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
 	fmt.Println("poIndex")
 	fmt.Println(poIndex)
