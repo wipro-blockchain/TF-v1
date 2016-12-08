@@ -282,7 +282,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	var jsonResp string
 	jsonResp = "{"
-	for i,val :=range poIndex2{
+	/*for i,val :=range poIndex2{
 		valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
 		if err != nil {
 			jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
@@ -293,8 +293,9 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		if i != 0 {
 			jsonResp = jsonResp + ","
 		}
-		
-	}
+	}*/
+	valAsbytes, err := stub.GetState(poIndex[0])	
+	jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
 	jsonResp = jsonResp + "}"
 	
 	return []byte(jsonResp), nil													//send it onward
