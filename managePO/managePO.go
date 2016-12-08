@@ -69,7 +69,7 @@ type PO struct{
 type allPO struct{
 	PO_list []PO `json:"po_list"`
 }
-
+ var jsonResp string
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -273,7 +273,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			return nil, errors.New(errResp)
 		}
 		json.Unmarshal(poAsBytes, &poIndex2)
-		jsonResp := "{"
+		jsonResp = "{"
 		for i,val :=range poIndex2{
 				fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 				valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
@@ -295,7 +295,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		return []byte(jsonResp), nil
 	}
 	
-	return nil,nil								//send it onward
+	return []byte(jsonResp),nil								//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
