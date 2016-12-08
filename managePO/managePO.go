@@ -343,7 +343,17 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
 		fmt.Println("PO found with id : " + transId)
-		fmt.Println(res);
+		fmt.	`{`+
+			`"transId": "` + transId + `" , `+
+			`"sellerName": "` + sellerName + `" , `+
+			`"buyerName": "` + buyerName + `" , `+
+			`"ExpectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
+			`"PO_status": "` + po_status + `" , `+ 
+			`"PO_date": "` + po_date + `" , `+ 
+			`"id": "` + item_id + `" , `+ 
+			`"name": "` + item_name + `" , `+ 
+			`"quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
+			`}`Println(res);
 		res.SellerName = args[1]
 		res.BuyerName = args[2]
 		res.ExpectedDeliveryDate = args[3]
