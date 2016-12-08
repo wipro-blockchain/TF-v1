@@ -253,6 +253,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
+	var errResp string
 	var poJson []string
 	fmt.Println("poAsBytes")
 	fmt.Println(poAsBytes)
@@ -261,6 +262,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	fmt.Println("poIndex")
 	fmt.Println(poIndex)
 	for i,val := range poIndex{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		poAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
@@ -343,17 +345,7 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
 		fmt.Println("PO found with id : " + transId)
-		fmt.	`{`+
-			`"transId": "` + transId + `" , `+
-			`"sellerName": "` + sellerName + `" , `+
-			`"buyerName": "` + buyerName + `" , `+
-			`"ExpectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
-			`"PO_status": "` + po_status + `" , `+ 
-			`"PO_date": "` + po_date + `" , `+ 
-			`"id": "` + item_id + `" , `+ 
-			`"name": "` + item_name + `" , `+ 
-			`"quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
-			`}`Println(res);
+		fmt.Println(res);
 		res.SellerName = args[1]
 		res.BuyerName = args[2]
 		res.ExpectedDeliveryDate = args[3]
