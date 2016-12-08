@@ -255,8 +255,8 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	var errResp string
 	//var poJson2 []string
-	var poJson []string
-	var valAsbytes []byte
+	//var poJson []string
+	//var valAsbytes []byte
 	//var poAsBytes2 []byte
 	//fmt.Println("poAsBytes")
 	//fmt.Println(poAsBytes)
@@ -290,13 +290,23 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(jsonResp)
 		}
-		json.Unmarshal(valAsbytes, &poJson)
+		jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
+		
+		if i != 0 {
+			jsonResp = jsonResp + ","
+		}
+		if i == len(poIndex2){
+			jsonResp = jsonResp + "}"
+			return []byte(jsonResp), nil			
+		}
+		
 	}
+	
 	//valAsbytes, err := stub.GetState(poIndex[0])	
 	//jsonResp = jsonResp + "\""+ poIndex[0] + "\":" + string(valAsbytes[:])
 	
-	
-	return valAsbytes, nil													//send it onward
+	return []byte(jsonResp), nil
+											//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
