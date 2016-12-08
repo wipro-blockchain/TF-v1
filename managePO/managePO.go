@@ -254,7 +254,9 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		return nil, errors.New("Failed to get PO index")
 	}
 	var errResp string
+	var poJson2 []string
 	var poJson []string
+	var poAsBytes2 []byte
 	fmt.Println("poAsBytes")
 	fmt.Println(poAsBytes)
 	var poIndex []string
@@ -272,6 +274,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		fmt.Println("************* individual PO" )
 		fmt.Println(poJson) 
 		for j,val2 := range poJson{
+			fmt.Println(strconv.Itoa(j) + " - looking at " + val2 + " for all PO")
 			poAsBytes2, err := stub.GetState(val2)
 			if err != nil {
 				errResp = "{\"Error\":\"Failed to get state for " + val2 + "\"}"
