@@ -69,7 +69,7 @@ type PO struct{
 type allPO struct{
 	PO_list []PO `json:"po_list"`
 }
-var jsonResp string
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -281,7 +281,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			fmt.Println(string(x) + " - " + poIndex[x])
 		}*/
 	}
-	
+	var jsonResp string
 	jsonResp = "{"
 	for i,val :=range poIndex2{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
@@ -291,7 +291,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			return nil, errors.New(jsonResp)
 		}
 		jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
-		
+		fmt.Println(jsonResp + "\""+ val + "\":" + string(valAsbytes[:]))
 		if i != 0 {
 			jsonResp = jsonResp + ","
 		}
