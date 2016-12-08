@@ -295,7 +295,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		}
 		
 	}
-	jsonResp = "}"
+	jsonResp = jsonResp + "}"
 	
 	return []byte(jsonResp), nil													//send it onward
 }
