@@ -281,7 +281,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			fmt.Println(string(x) + " - " + poIndex[x])
 		}*/
 	}
-	jsonResp := "{"
+	jsonResp = "{"
 	for i,val :=range poIndex2{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
@@ -294,7 +294,7 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		if i != 0 {
 			jsonResp = jsonResp + ","
 		}
-		jsonResp = fmt.Sprintln(jsonResp)		
+		//jsonResp = fmt.Sprintln(jsonResp)		
 	}
 	
 	//valAsbytes, err := stub.GetState(poIndex[0])	
