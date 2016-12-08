@@ -255,7 +255,8 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	var errResp string
 	//var poJson2 []string
-	//var poJson []string
+	var poJson []string
+	var valAsbytes []byte
 	//var poAsBytes2 []byte
 	//fmt.Println("poAsBytes")
 	//fmt.Println(poAsBytes)
@@ -283,22 +284,19 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	var jsonResp string
 	jsonResp = "{"
 	for i,val :=range poIndex2{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
 		if err != nil {
-			&jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+			jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(jsonResp)
 		}
-		&jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
-		
-		if i != 0 {
-			&jsonResp = jsonResp + ","
-		}
+		json.Unmarshal(valAsbytes, &poJson)
 	}
 	//valAsbytes, err := stub.GetState(poIndex[0])	
 	//jsonResp = jsonResp + "\""+ poIndex[0] + "\":" + string(valAsbytes[:])
-	jsonResp = jsonResp + "}"
 	
-	return []byte(jsonResp), nil													//send it onward
+	
+	return valAsbytes, nil													//send it onward
 }
 // ============================================================================================================================
 // Delete - remove a key/value pair from state
