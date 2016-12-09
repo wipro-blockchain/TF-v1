@@ -217,13 +217,15 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
 	jsonResp = "{"
 	for i,val := range poIndex{
+		var valIndex []string
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		valueAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		if string(valueAsBytes[2]) == buyerName { 
+		json.Unmarshal(valueAsBytes, &valIndex)
+		if valIndex[2] == buyerName { 
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 		}
 		if i != len(poIndex) {
