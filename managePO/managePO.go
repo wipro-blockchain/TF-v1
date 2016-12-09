@@ -203,7 +203,7 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 //  getPO_byBuyer - get PO details by buyer name from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp, errResp string
+	var errResp, buyerName string
 	var poIndex, valIndex []string
 	var err error
 	if len(args) != 1 {
@@ -236,7 +236,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 //  getPO_bySeller - display PO details for a specific Seller from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp, errResp string
+	var errResp, sellerName string
 	var poIndex, valIndex []string
 	var err error
 	if len(args) != 1 {
