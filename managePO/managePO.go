@@ -243,6 +243,8 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 //  get_AllPO- display details of all PO from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp, errResp string
+	var poIndex []string
 	var err error
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
@@ -251,36 +253,22 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
-	var errResp string
-	var poIndex []string
-	var poIndex2 []string
-	var jsonResp string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Println("poIndex")
-	fmt.Println(poIndex)
+	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
-		indexAsBytes, err := stub.GetState(val)
+		valueAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		json.Unmarshal(indexAsBytes, &poIndex2)
-		jsonResp = "{"
-		for j,value :=range poIndex2{
-			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
-			valAsbytes, err := stub.GetState(value)									//get the var from chaincode state
-			if err != nil {
-				jsonResp = "{\"Error\":\"Failed to get state for " + value + "\"}"
-				return nil, errors.New(jsonResp)
-			}
-			jsonResp = jsonResp + "\""+ value + "\":" + string(valAsbytes[:])
-			if i != 0 {
-				jsonResp = jsonResp + ","
-			}
+		jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+		if i != 0 {
+			jsonResp = jsonResp + ","
 		}
 		jsonResp = jsonResp + "}"
 	}
+	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
 	return []byte(jsonResp), nil
 											//send it onward
 }
