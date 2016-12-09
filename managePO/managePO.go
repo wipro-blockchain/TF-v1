@@ -449,13 +449,10 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
-	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
 		return nil, errors.New("Failed to get PO transID")
 	}
-	fmt.Println("poAsBytes in create_po")
-	fmt.Println(poAsBytes);
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
