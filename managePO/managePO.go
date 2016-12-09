@@ -223,7 +223,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		if string(valueAsBytes[i]) == buyerName { 
+		if string(valueAsBytes[2]) == buyerName { 
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 		}
 		if i != len(poIndex) {
