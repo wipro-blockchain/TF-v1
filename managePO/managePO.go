@@ -226,7 +226,12 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		for j,value := range valIndex{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
 			if value == buyerName {
-				return []byte(valIndex[j]),nil
+				valAsBytes, err := stub.GetState(value)
+				if err != nil {
+					errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+					return nil, errors.New(errResp)
+				}
+				return valAsBytes,nil
 			}
 		}
 	}
@@ -260,7 +265,12 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 		for j,value := range valIndex{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
 			if value == sellerName {
-				return []byte(valIndex[j]),nil
+				valAsBytes, err := stub.GetState(value)
+				if err != nil {
+					errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+					return nil, errors.New(errResp)
+				}
+				return valAsBytes,nil
 			}
 		}
 	}
