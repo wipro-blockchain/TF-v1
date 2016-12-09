@@ -449,6 +449,7 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
+	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
 		return nil, errors.New("Failed to get PO transID")
@@ -483,20 +484,15 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
-	fmt.Println("poIndexAsBytes in create_po")
-	fmt.Println(poIndexAsBytes);
 	var poIndex []string
 	json.Unmarshal(poIndexAsBytes, &poIndex)							//un stringify it aka JSON.parse()
 	
 	//append
 	poIndex = append(poIndex, transId)									//add PO transID to index list
-	fmt.Println("poIndex in create_po after append")
-	fmt.Println(poIndex);
 	fmt.Println("! PO index: ", poIndex)
 	jsonAsBytes, _ := json.Marshal(poIndex)
 	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of PO
-	fmt.Println("jsonAsBytes in create_po after PutState(POIndexStr ")
-	fmt.Println(jsonAsBytes);
+
 	fmt.Println("- end create PO")
 	return nil, nil
 }
