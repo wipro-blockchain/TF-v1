@@ -203,7 +203,7 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 //  getPO_byBuyer - get PO details by buyer name from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	/*var errResp, buyerName string
+	var jsonResp, errResp, buyerName string
 	var poIndex, valIndex []string
 	var err error
 	if len(args) != 1 {
@@ -215,6 +215,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		return nil, errors.New("Failed to get PO index")
 	}
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
+	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
 		valueAsBytes, err := stub.GetState(val)
@@ -226,14 +227,21 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		for j,value := range valIndex{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
 			if value == buyerName {
-				return valueAsBytes,nil
+				jsonResp = jsonResp + "\""+ value + "\":" + string(valueAsBytes[:])
+			} else {
+				break
 			}
+			if i != len(poIndex) {
+				jsonResp = jsonResp + ","
+			}
+			
 		}
 	}
-	return nil, nil
-	*/
+	jsonResp = jsonResp + "}"
+	return []byte(jsonResp), nil
 	
-	var jsonResp, errResp,buyerName string
+	
+	/*var jsonResp, errResp,buyerName string
 	var poIndex []string
 	var err error
 	if len(args) != 1 {
@@ -265,7 +273,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	}
 	jsonResp = jsonResp + "}"
 	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
-	return []byte(jsonResp), nil
+	return []byte(jsonResp), nil*/
 }
 // ============================================================================================================================
 //  getPO_bySeller - display PO details for a specific Seller from chaincode state
