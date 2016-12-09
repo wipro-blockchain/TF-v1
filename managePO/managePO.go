@@ -64,11 +64,11 @@ type PO struct{
 	Timestamp int64 `json:"timestamp"`			//utc timestamp of creation
 	Want Description  `json:"want"`				//description of desired marble
 	Willing []Description `json:"willing"`		//array of marbles willing to trade away
-}*/
+}
 
 type allPO struct{
 	PO_list []PO `json:"po_list"`
-}
+}*/
 
 // ============================================================================================================================
 // Main
@@ -226,12 +226,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		for j,value := range valIndex{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
 			if value == buyerName {
-				valAsBytes, err := stub.GetState(value)
-				if err != nil {
-					errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
-					return nil, errors.New(errResp)
-				}
-				return valAsBytes,nil
+				return valueAsBytes,nil
 			}
 		}
 	}
@@ -265,12 +260,7 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 		for j,value := range valIndex{
 			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
 			if value == sellerName {
-				valAsBytes, err := stub.GetState(value)
-				if err != nil {
-					errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
-					return nil, errors.New(errResp)
-				}
-				return valAsBytes,nil
+				return valueAsBytes,nil
 			}
 		}
 	}
