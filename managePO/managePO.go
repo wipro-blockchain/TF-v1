@@ -260,21 +260,21 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	fmt.Println(poIndex)
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
-		poAsBytes, err = stub.GetState(val)
+		indexAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		json.Unmarshal(poAsBytes, &poIndex2)
+		json.Unmarshal(indexAsBytes, &poIndex2)
 		jsonResp = "{"
-		for i,val :=range poIndex2{
-			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
-			valAsbytes, err := stub.GetState(val)									//get the var from chaincode state
+		for j,value :=range poIndex2{
+			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
+			valAsbytes, err := stub.GetState(value)									//get the var from chaincode state
 			if err != nil {
-				jsonResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				jsonResp = "{\"Error\":\"Failed to get state for " + value + "\"}"
 				return nil, errors.New(jsonResp)
 			}
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valAsbytes[:])
+			jsonResp = jsonResp + "\""+ value + "\":" + string(valAsbytes[:])
 			if i != 0 {
 				jsonResp = jsonResp + ","
 			}
