@@ -208,7 +208,7 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	var err error
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
-	}
+}
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
