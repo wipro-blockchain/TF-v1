@@ -243,9 +243,7 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 //  get_AllPO- display details of all PO from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	//var jsonResp string
 	var err error
-
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
@@ -254,12 +252,6 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 		return nil, errors.New("Failed to get PO index")
 	}
 	var errResp string
-	//var poJson2 []string
-	//var poJson []string
-	//var valAsbytes []byte
-	//var poAsBytes2 []byte
-	//fmt.Println("poAsBytes")
-	//fmt.Println(poAsBytes)
 	var poIndex []string
 	var poIndex2 []string
 	var jsonResp string
@@ -286,9 +278,8 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			if i != 0 {
 				jsonResp = jsonResp + ","
 			}
-			//jsonResp = fmt.Sprintln(jsonResp)		
 		}
-	jsonResp = jsonResp + "}"
+		jsonResp = jsonResp + "}"
 	}
 	return []byte(jsonResp), nil
 											//send it onward
