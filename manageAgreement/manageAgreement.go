@@ -180,7 +180,7 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 	}
 	// set buyer's name
 	buyer_name = args[0]
-	fmt.Println("buyer_name" + buyer_name)
+	fmt.Println("buyer_name : " + buyer_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index string")
@@ -210,9 +210,9 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-		}
-		if i < len(agreementIndex)-1 {
-			jsonResp = jsonResp + ","
+			if i < len(agreementIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
 		}
 	}
 	jsonResp = jsonResp + "}"
@@ -662,12 +662,13 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
-		`"tc_text" : "` + res.TC_Text + `" , `+ 
+		`"tc_text" : "` + res.TC_Text + `" `+ 
 		`}`
 	err = stub.PutState(agreementId, []byte(order))									//store Agreement with id as key
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("end update_agreement")
 	return nil, nil
 }
 // ============================================================================================================================
@@ -785,7 +786,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"total_value": "` + total_value + `" , `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
-		`"tc_text": "` + tc_text + `" , `+ 
+		`"tc_text": "` + tc_text + `" `+ 
 		`}`
 		fmt.Println("order: " + order)
 		fmt.Print("order in bytes array: ")
