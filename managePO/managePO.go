@@ -24,8 +24,6 @@ import (
 "fmt"
 "strconv"
 "encoding/json"
-	//"time"
-	//"strings"
 
 "github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -34,13 +32,12 @@ import (
 type ManagePO struct {
 }
 
-var POIndexStr = "_POindex"				//name for the key/value that will store a list of all known marbles
-//var openTradesStr = "_opentrades"				//name for the key/value that will store all open trades
+var POIndexStr = "_POindex"				//name for the key/value that will store a list of all known PO
 
-type PO struct{
-	TransID string `json:"transId"`					//the fieldtags are needed to keep case from bouncing around
+type PO struct{							// Attributes of a PO 
+	TransID string `json:"transId"`					
 	SellerName string `json:"sellerName"`
-	BuyerName string `json:"buyerName"`					//the fieldtags are needed to keep case from bouncing around
+	BuyerName string `json:"buyerName"`					
 	ExpectedDeliveryDate string `json:"expectedDeliveryDate"`
 	PO_status string `json:"po_status"`
 	PO_date string `json:"po_date"`
@@ -48,58 +45,28 @@ type PO struct{
 	Item_name string `json:"item_name"`
 	Item_quantity int `json:"item_quantity"`
 }
-
-/*type allPO struct{
-	all_po []PO `json:"all_PO"`
-	}*/
-
-/*type Item struct{
-	ID string `json:"id"`					//the fieldtags are needed to keep case from bouncing around
-	Name string `json:"name"`
-	Quantity int `json:"quantity"`
-	}*/
-
-/*type AnOpenTrade struct{
-	User string `json:"user"`					//user who created the open trade order
-	Timestamp int64 `json:"timestamp"`			//utc timestamp of creation
-	Want Description  `json:"want"`				//description of desired marble
-	Willing []Description `json:"willing"`		//array of marbles willing to trade away
-}
-
-type allPO struct{
-	PO_list []PO `json:"po_list"`
-	}*/
-
 // ============================================================================================================================
-// Main
+// Main - start the chaincode for PO management
 // ============================================================================================================================
-	func main() {
-		err := shim.Start(new(ManagePO))
-		if err != nil {
-			fmt.Printf("Error starting Simple chaincode: %s", err)
-		}
+func main() {			
+	err := shim.Start(new(ManagePO))
+	if err != nil {
+		fmt.Printf("Error starting PO management chaincode: %s", err)
 	}
-
+}
 // ============================================================================================================================
 // Init - reset all the things
 // ============================================================================================================================
-	func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-		var msg string
-	//var PO_list allPO
-
-		var err error
-		if len(args) != 1 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 1")
-		}
+func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	var msg string
+	var err error
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+	}
 	// Initialize the chaincode
-
-		msg = args[0]
-		fmt.Println("ManagePO chaincode is deployed with the message : "+ msg);
-	/*Aval, err = strconv.Atoi(args[0])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding")
-		}*/
-
+	msg = args[0]
+	fmt.Println("ManagePO chaincode is deployed with the message : "+ msg);
+	
 	// Write the state to the ledger
 	err = stub.PutState("abc", []byte(msg))				//making a test var "abc", I find it handy to read/write to it right away to test the network
 	if err != nil {
@@ -113,16 +80,8 @@ type allPO struct{
 		return nil, err
 	}
 	
-	/*var trades AllTrades
-	jsonAsBytes, _ = json.Marshal(trades)								//clear the open trade struct
-	err = stub.PutState(openTradesStr, jsonAsBytes)
-	if err != nil {
-		return nil, err
-		}*/
-
-		return nil, nil
-	}
-
+	return nil, nil
+}
 // ============================================================================================================================
 // Run - Our entry point for Invocations - [LEGACY] obc-peer 4/25/2016
 // ============================================================================================================================
@@ -130,7 +89,6 @@ type allPO struct{
 		fmt.Println("run is running " + function)
 		return t.Invoke(stub, function, args)
 	}
-
 // ============================================================================================================================
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
@@ -140,24 +98,16 @@ type allPO struct{
 	// Handle different functions
 	if function == "init" {													//initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
-	} else if function == "create_po" {											//writes a value to the chaincode state
+	} else if function == "create_po" {											//create a new PO
 		return t.create_po(stub, args)
-	}else if function == "delete_po" {									//create a new marble
+	}else if function == "delete_po" {									// delete a PO
 		return t.delete_po(stub, args)
-	}else if function == "update_po" {									//create a new trade order
+	}else if function == "update_po" {									//update a PO
 		return t.update_po(stub, args)
-	}/* else if function == "perform_trade" {									//forfill an open trade order
-		res, err := t.perform_trade(stub, args)
-		cleanTrades(stub)													//lets clean just in case
-		return res, err
-	} else if function == "remove_trade" {									//cancel an open trade order
-		return t.remove_trade(stub, args)
-		}*/
+	}
 	fmt.Println("invoke did not find func: " + function)					//error
-
 	return nil, errors.New("Received unknown function invocation")
 }
-
 // ============================================================================================================================
 // Query - Our entry point for Queries
 // ============================================================================================================================
@@ -165,22 +115,20 @@ func (t *ManagePO) Query(stub shim.ChaincodeStubInterface, function string, args
 	fmt.Println("query is running " + function)
 
 	// Handle different functions
-	if function == "getPO_byID" {													//read a variable
+	if function == "getPO_byID" {													//Read a PO by transId
 		return t.getPO_byID(stub, args)
-	} else if function == "getPO_byBuyer" {													//read a variable
+	} else if function == "getPO_byBuyer" {													//Read a PO by Buyer's name
 		return t.getPO_byBuyer(stub, args)
-	} else if function == "getPO_bySeller" {													//read a variable
+	} else if function == "getPO_bySeller" {													//Read a PO by Seller's name
 		return t.getPO_bySeller(stub, args)
-	} else if function == "get_AllPO" {													//read a variable
+	} else if function == "get_AllPO" {													//Read all POs
 		return t.get_AllPO(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)						//error
-
 	return nil, errors.New("Received unknown function query")
 }
-
 // ============================================================================================================================
-// getPO_byID - display PO details for a specific ID from chaincode state
+// getPO_byID - get PO details for a specific ID from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var transId, jsonResp string
@@ -189,20 +137,20 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
 	}
-
+	// set transId
 	transId = args[0]
-	valAsbytes, err := stub.GetState(transId)									//get the var from chaincode state
+	valAsbytes, err := stub.GetState(transId)									//get the transId from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + transId + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	fmt.Print("valAsbytes : ")
-	fmt.Println(valAsbytes)
+	//fmt.Print("valAsbytes : ")
+	//fmt.Println(valAsbytes)
 	fmt.Println("end getPO_byID")
 	return valAsbytes, nil													//send it onward
 }
 // ============================================================================================================================
-//  getPO_byBuyer - get PO details by buyer name from chaincode state
+//  getPO_byBuyer - get PO details by buyer's name from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp, buyerName, errResp string
@@ -213,19 +161,20 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
+	// set buyer's name
 	buyerName = args[0]
-	fmt.Println("buyerName" + buyerName)
+	//fmt.Println("buyerName" + buyerName)
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
-		return nil, errors.New("Failed to get PO index")
+		return nil, errors.New("Failed to get PO index string")
 	}
-	fmt.Print("poAsBytes : ")
-	fmt.Println(poAsBytes)
+	//fmt.Print("poAsBytes : ")
+	//fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Print("poIndex : ")
-	fmt.Println(poIndex)
-	fmt.Println("len(poIndex) : ")
-	fmt.Println(len(poIndex))
+	//fmt.Print("poIndex : ")
+	//fmt.Println(poIndex)
+	//fmt.Println("len(poIndex) : ")
+	//fmt.Println(len(poIndex))
 	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getPO_byBuyer")
@@ -234,43 +183,31 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		fmt.Print("valueAsBytes : ")
-		fmt.Println(valueAsBytes)
+		//fmt.Print("valueAsBytes : ")
+		//fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
-		fmt.Print("valIndex: ")
-		fmt.Print(valIndex)
-		/*fmt.Println("len(valIndex) : ")
-		fmt.Println(len(valIndex))*/
-		//for j,value := range valIndex{
-			//fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for individual buyer")
-			/*AsBytes, err := stub.GetState(value)
-			if err != nil {
-				return nil, errors.New("Failed to get PO index")
-			}*/
-			if valIndex.BuyerName == buyerName{
-				fmt.Println("Buyer found")
-				jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-				fmt.Println("jsonResp inside if")
-				fmt.Println(jsonResp)
-			}
-		//}
-		
-		if i != len(poIndex) {
+		//fmt.Print("valIndex: ")
+		//fmt.Print(valIndex)
+		if valIndex.BuyerName == buyerName{
+			fmt.Println("Buyer found")
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			fmt.Println("jsonResp inside if")
+			fmt.Println(jsonResp)
+		}
+		if i < len(poIndex)-1 {
 			jsonResp = jsonResp + ","
 		}
 	}
-	
 	jsonResp = jsonResp + "}"
-	fmt.Println("jsonResp : " + jsonResp)
-	fmt.Print("jsonResp in bytes : ")
-	fmt.Println([]byte(jsonResp))
+	//fmt.Println("jsonResp : " + jsonResp)
+	//fmt.Print("jsonResp in bytes : ")
+	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_byBuyer")
-	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
 	return []byte(jsonResp), nil											//send it onward
 }
-	
+
 // ============================================================================================================================
-//  getPO_bySeller - display PO details for a specific Seller from chaincode state
+//  getPO_bySeller - get PO details for a specific Seller from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp, sellerName, errResp string
@@ -281,19 +218,20 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
+	// set seller name
 	sellerName = args[0]
-	fmt.Println("buyerName" + sellerName)
+	//fmt.Println("buyerName" + sellerName)
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
-	fmt.Print("poAsBytes : ")
-	fmt.Println(poAsBytes)
+	//fmt.Print("poAsBytes : ")
+	//fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Print("poIndex : ")
-	fmt.Println(poIndex)
-	fmt.Println("len(poIndex) : ")
-	fmt.Println(len(poIndex))
+	//fmt.Print("poIndex : ")
+	//fmt.Println(poIndex)
+	//fmt.Println("len(poIndex) : ")
+	//fmt.Println(len(poIndex))
 	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getting sellerName")
@@ -302,32 +240,31 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		fmt.Print("valueAsBytes : ")
-		fmt.Println(valueAsBytes)
+		//fmt.Print("valueAsBytes : ")
+		//fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
-		fmt.Print("valIndex: ")
-		fmt.Print(valIndex)
+		//fmt.Print("valIndex: ")
+		//fmt.Print(valIndex)
 		if valIndex.SellerName == sellerName{
 			fmt.Println("Seller found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
+			//fmt.Println("jsonResp inside if")
+			//fmt.Println(jsonResp)
 		}
-		if i != len(poIndex) {
+		if i < len(poIndex)-1 {
 			jsonResp = jsonResp + ","
 		}
 	}
 	
 	jsonResp = jsonResp + "}"
-	fmt.Println("jsonResp : " + jsonResp)
-	fmt.Print("jsonResp in bytes : ")
-	fmt.Println([]byte(jsonResp))
+	//fmt.Println("jsonResp : " + jsonResp)
+	//fmt.Print("jsonResp in bytes : ")
+	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_bySeller")
-	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
 	return []byte(jsonResp), nil											//send it onward
 }
 // ============================================================================================================================
-//  get_AllPO- display details of all PO from chaincode state
+//  get_AllPO- get details of all PO from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp, errResp string
@@ -341,11 +278,11 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
-	fmt.Print("poAsBytes : ")
-	fmt.Println(poAsBytes)
+	//fmt.Print("poAsBytes : ")
+	//fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Print("poIndex : ")
-	fmt.Println(poIndex)
+	//fmt.Print("poIndex : ")
+	//fmt.Println(poIndex)
 	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
@@ -354,54 +291,53 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
-		fmt.Print("valueAsBytes : ")
-		fmt.Println(valueAsBytes)
+		//fmt.Print("valueAsBytes : ")
+		//fmt.Println(valueAsBytes)
 		jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-		if i != len(poIndex) {
+		if i < len(poIndex)-1 {
 			jsonResp = jsonResp + ","
 		}
 	}
-	fmt.Println("len(poIndex) : ")
-	fmt.Println(len(poIndex))
+	//fmt.Println("len(poIndex) : ")
+	//fmt.Println(len(poIndex))
 	jsonResp = jsonResp + "}"
-	fmt.Println("jsonResp : " + jsonResp)
-	fmt.Print("jsonResp in bytes : ")
-	fmt.Println([]byte(jsonResp))
+	//fmt.Println("jsonResp : " + jsonResp)
+	//fmt.Print("jsonResp in bytes : ")
+	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end get_AllPO")
-	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
 	return []byte(jsonResp), nil
 											//send it onward
 }
 // ============================================================================================================================
-// Delete - remove a key/value pair from state
+// Delete - remove a PO from chain
 // ============================================================================================================================
 func (t *ManagePO) delete_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
-	
+	// set transId
 	transId := args[0]
-	err := stub.DelState(transId)													//remove the key from chaincode state
+	err := stub.DelState(transId)													//remove the PO from chaincode
 	if err != nil {
 		return nil, errors.New("Failed to delete state")
 	}
 
-	//get the marble index
+	//get the PO index
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
-		return nil, errors.New("Failed to get marble index")
+		return nil, errors.New("Failed to get PO index")
 	}
-	fmt.Println("poAsBytes in delete po")
-	fmt.Println(poAsBytes);
+	//fmt.Println("poAsBytes in delete po")
+	//fmt.Println(poAsBytes);
 	var poIndex []string
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Println("poIndex in delete po")
-	fmt.Println(poIndex);
+	//fmt.Println("poIndex in delete po")
+	//fmt.Println(poIndex);
 	//remove marble from index
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for " + transId)
-		if val == transId{															//find the correct marble
-			fmt.Println("found marble")
+		if val == transId{															//find the correct PO
+			fmt.Println("found PO with matching transId")
 			poIndex = append(poIndex[:i], poIndex[i+1:]...)			//remove it
 			for x:= range poIndex{											//debug prints...
 				fmt.Println(string(x) + " - " + poIndex[x])
@@ -413,31 +349,30 @@ func (t *ManagePO) delete_po(stub shim.ChaincodeStubInterface, args []string) ([
 	err = stub.PutState(POIndexStr, jsonAsBytes)
 	return nil, nil
 }
-
 // ============================================================================================================================
-// Write - write variable into chaincode state
+// Write - update PO into chaincode state
 // ============================================================================================================================
 func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp string
 	var err error
-	fmt.Println("running update_po()")
-
+	fmt.Println("start update_po")
 	if len(args) != 9 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9.")
 	}
+	// set transId
 	transId := args[0]
-	poAsBytes, err := stub.GetState(transId)									//get the var from chaincode state
+	poAsBytes, err := stub.GetState(transId)									//get the PO for the specified transId from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + transId + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	fmt.Print("poAsBytes in update po")
-	fmt.Println(poAsBytes);
+	//fmt.Print("poAsBytes in update po")
+	//fmt.Println(poAsBytes);
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
-		fmt.Println("PO found with id : " + transId)
-		fmt.Println(res);
+		fmt.Println("PO found with transId : " + transId)
+		//fmt.Println(res);
 		res.SellerName = args[1]
 		res.BuyerName = args[2]
 		res.ExpectedDeliveryDate = args[3]
@@ -469,19 +404,14 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	return nil, nil
 }
-
 // ============================================================================================================================
-// Init PO - create a new PO, store into chaincode state
+// create PO - create a new PO, store into chaincode state
 // ============================================================================================================================
 func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	//var po PO
-	//   0       1       2     3
-	// "asdf", "blue", "35", "bob"
 	if len(args) != 9 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
-	//input sanitation
 	fmt.Println("start create_po")
 	if len(args[0]) <= 0 {
 		return nil, errors.New("1st argument must be a non-empty string")
@@ -522,21 +452,20 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
-	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
 		return nil, errors.New("Failed to get PO transID")
 	}
-	fmt.Print("poAsBytes: ")
-	fmt.Println(poAsBytes)
+	//fmt.Print("poAsBytes: ")
+	//fmt.Println(poAsBytes)
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
-	fmt.Print("res: ")
-	fmt.Println(res)
+	//fmt.Print("res: ")
+	//fmt.Println(res)
 	if res.TransID == transId{
-		fmt.Println("This PO arleady exists: " + transId)
-		fmt.Println(res);
-		return nil, errors.New("This PO arleady exists")				//all stop a marble by this name exists
+		//fmt.Println("This PO arleady exists: " + transId)
+		//fmt.Println(res);
+		return nil, errors.New("This PO arleady exists")				//all stop a PO by this name exists
 	}
 	
 	//build the PO json string manually
@@ -551,37 +480,36 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_name": "` + item_name + `" , `+ 
 		`"item_quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
 		`}`
-	fmt.Println("order: " + order)
-	fmt.Print("order in bytes array: ")
-	fmt.Println([]byte(order))
-	err = stub.PutState(transId, []byte(order))									//store PO with id as key
+		//fmt.Println("order: " + order)
+		//fmt.Print("order in bytes array: ")
+		//fmt.Println([]byte(order))
+	err = stub.PutState(transId, []byte(order))									//store PO with transId as key
 	if err != nil {
 		return nil, err
 	}
-
 	//get the PO index
 	poIndexAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
 	var poIndex []string
-	fmt.Print("poIndexAsBytes: ")
-	fmt.Println(poIndexAsBytes)
+	//fmt.Print("poIndexAsBytes: ")
+	//fmt.Println(poIndexAsBytes)
 	
 	json.Unmarshal(poIndexAsBytes, &poIndex)							//un stringify it aka JSON.parse()
-	fmt.Print("poIndex after unmarshal..before append: ")
-	fmt.Println(poIndex)
+	//fmt.Print("poIndex after unmarshal..before append: ")
+	//fmt.Println(poIndex)
 	//append
 	poIndex = append(poIndex, transId)									//add PO transID to index list
-	fmt.Println("! PO index after appending transId: ", poIndex)
+	//fmt.Println("! PO index after appending transId: ", poIndex)
 	jsonAsBytes, _ := json.Marshal(poIndex)
-	fmt.Print("jsonAsBytes: ")
-	fmt.Println(jsonAsBytes)
+	//fmt.Print("jsonAsBytes: ")
+	//fmt.Println(jsonAsBytes)
 	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of PO
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("end create PO")
+	fmt.Println("end create_po")
 	return nil, nil
 }
