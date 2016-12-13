@@ -206,13 +206,15 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 // ============================================================================================================================
 func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp, buyerName, errResp string
-	var poIndex, valIndex []string
+	var poIndex []string
+	var valIndex PO
 	fmt.Println("start getPO_byBuyer")
 	var err error
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
 	buyerName = args[0]
+	fmt.Println("buyerName" + buyerName)
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
@@ -237,21 +239,21 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		json.Unmarshal(valueAsBytes, &valIndex)
 		fmt.Print("valIndex: ")
 		fmt.Print(valIndex)
-		fmt.Println("len(valIndex) : ")
-		fmt.Println(len(valIndex))
-		for j,value := range valIndex{
-			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for individual buyer")
+		/*fmt.Println("len(valIndex) : ")
+		fmt.Println(len(valIndex))*/
+		//for j,value := range valIndex{
+			//fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for individual buyer")
 			/*AsBytes, err := stub.GetState(value)
 			if err != nil {
 				return nil, errors.New("Failed to get PO index")
 			}*/
-			if valIndex[j] == buyerName{
+			if valIndex.BuyerName == buyerName{
 				fmt.Println("Buyer found")
-				jsonResp = jsonResp + "\""+ value + "\":" + string(valueAsBytes[:])
+				jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 				fmt.Println("jsonResp inside if")
 				fmt.Println(jsonResp)
 			}
-		}
+		//}
 		
 		if i != len(poIndex) {
 			jsonResp = jsonResp + ","
