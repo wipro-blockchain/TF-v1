@@ -349,7 +349,7 @@ func (t *ManagePayment) deletePayment(stub shim.ChaincodeStubInterface, args []s
 	fmt.Println("paymentIndex in delete payment")
 	fmt.Println(paymentIndex);
 	//remove payment from index
-	for i,val := range paymentIndex{
+	for i,val := range pay*mentIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for " + paymentId)
 		if val == paymentId{															//find the correct payment
 			fmt.Println("found payment")
@@ -431,7 +431,7 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 9")
+		return nil, errors.New("Incorrect number of arguments. Expecting 10")
 	}
 	//input sanitation
 	fmt.Println("- start createPayment")

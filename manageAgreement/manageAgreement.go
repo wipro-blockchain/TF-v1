@@ -267,10 +267,11 @@ func (t *ManageAgreement) getAgreement_bySeller(stub shim.ChaincodeStubInterface
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
+			if i < len(agreementIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
 		}
-		if i < len(agreementIndex)-1 {
-			jsonResp = jsonResp + ","
-		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
@@ -605,8 +606,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	var jsonResp string
 	var err error
 	fmt.Println("start update_agreement")
-	if len(args) != 9 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 9.")
+	if len(args) != 17{
+		return nil, errors.New("Incorrect number of arguments. Expecting 17.")
 	}
 	// set agreementId
 	agreementId := args[0]
