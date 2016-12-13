@@ -349,7 +349,7 @@ func (t *ManagePayment) deletePayment(stub shim.ChaincodeStubInterface, args []s
 	fmt.Println("paymentIndex in delete payment")
 	fmt.Println(paymentIndex);
 	//remove payment from index
-	for i,val := range pay*mentIndex{
+	for i,val := range paymentIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for " + paymentId)
 		if val == paymentId{															//find the correct payment
 			fmt.Println("found payment")
