@@ -431,7 +431,8 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		jsonResp = "{\"Error\":\"Failed to get state for " + transId + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	
+	fmt.Print("poAsBytes in update po")
+	fmt.Println(poAsBytes);
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
