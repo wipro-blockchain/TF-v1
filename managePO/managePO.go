@@ -333,6 +333,8 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
 	fmt.Print("poIndex : ")
 	fmt.Println(poIndex)
+	fmt.Println("len(poIndex) : ")
+	fmt.Println(len(poIndex))
 	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
@@ -348,6 +350,8 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 			jsonResp = jsonResp + ","
 		}
 	}
+	fmt.Println("len(poIndex) : ")
+	fmt.Println(len(poIndex))
 	jsonResp = jsonResp + "}"
 	fmt.Println("jsonResp : " + jsonResp)
 	fmt.Print("jsonResp in bytes : ")
