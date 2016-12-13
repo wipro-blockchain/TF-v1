@@ -191,12 +191,13 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		if valIndex.BuyerName == buyerName{
 			fmt.Println("Buyer found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
+			//fmt.Println("jsonResp inside if")
+			//fmt.Println(jsonResp)
+			if i < len(poIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
 		}
-		if i < len(poIndex)-1 {
-			jsonResp = jsonResp + ","
-		}
+		
 	}
 	jsonResp = jsonResp + "}"
 	//fmt.Println("jsonResp : " + jsonResp)
@@ -250,10 +251,11 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			//fmt.Println("jsonResp inside if")
 			//fmt.Println(jsonResp)
+			if i < len(poIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
 		}
-		if i < len(poIndex)-1 {
-			jsonResp = jsonResp + ","
-		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
@@ -481,8 +483,8 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
 		`}`
 		//fmt.Println("order: " + order)
-		//fmt.Print("order in bytes array: ")
-		//fmt.Println([]byte(order))
+		fmt.Print("order in bytes array: ")
+		fmt.Println([]byte(order))
 	err = stub.PutState(transId, []byte(order))									//store PO with transId as key
 	if err != nil {
 		return nil, err
