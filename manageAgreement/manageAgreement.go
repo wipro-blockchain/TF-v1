@@ -43,7 +43,7 @@ type Agreement struct{							// Attributes of a Agreement
 	ShipperName string `json:"shipper_name"`
 	BB_name string `json:"bb_name"`
 	SB_name string `json:"sb_name"`	
-	PortAuthName string `json:"agreementrtAuth_name"`
+	PortAuthName string `json:"agreementPortAuth_name"`
 	AgreementCU_date string `json:"agreementCU_date"`
 	ItemID string `json:"item_id"`
 	Item_name string `json:"item_name"`
@@ -504,7 +504,7 @@ func (t *ManageAgreement) getAgreement_bySellerBank(stub shim.ChaincodeStubInter
 //  getAgreement_byPortAuthority - get Agreement details for a specific Port Authority from chaincode state
 // ============================================================================================================================
 func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp, agreementrtAuth_name, errResp string
+	var jsonResp, agreementPortAuth_name, errResp string
 	var agreementIndex []string
 	var valIndex Agreement
 	fmt.Println("start getAgreement_byPortAuthority")
@@ -513,8 +513,8 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
 	// set seller name
-	agreementrtAuth_name = args[0]
-	fmt.Println("agreementrtAuth_name" + agreementrtAuth_name)
+	agreementPortAuth_name = args[0]
+	fmt.Println("agreementPortAuth_name" + agreementPortAuth_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -539,7 +539,7 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 		json.Unmarshal(valueAsBytes, &valIndex)
 		fmt.Print("valIndex: ")
 		fmt.Print(valIndex)
-		if valIndex.PortAuthName == agreementrtAuth_name{
+		if valIndex.PortAuthName == agreementPortAuth_name{
 			fmt.Println("Seller found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
@@ -654,7 +654,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"shipper_name": "` + res.ShipperName + `" , `+ 
 		`"bb_name": "` + res.BB_name + `" , `+ 
 		`"sb_name": "` + res.SB_name + `" , `+ 	
-		`"agreementrtAuth_name": "` + res.PortAuthName + `" , `+ 
+		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
 		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
 		`"item_id": "` + res.ItemID + `" , `+ 
 		`"item_name": "` + res.Item_name + `" , `+ 
@@ -739,7 +739,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	shipper_name := args[5]
 	bb_name := args[6]
 	sb_name	:= args[7]
-	agreementrtAuth_name := args[8]
+	agreementPortAuth_name := args[8]
 	agreementCU_date := args[9]
 	item_id := args[10]
 	item_name := args[11]
@@ -777,7 +777,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"shipper_name": "` + shipper_name + `" , `+ 
 		`"bb_name": "` + bb_name + `" , `+ 
 		`"sb_name": "` + sb_name + `" , `+ 	
-		`"agreementrtAuth_name": "` + agreementrtAuth_name + `" , `+ 
+		`"agreementPortAuth_name": "` + agreementPortAuth_name + `" , `+ 
 		`"agreementCU_date": "` + agreementCU_date + `" , `+ 
 		`"item_id": "` + item_id + `" , `+ 
 		`"item_name": "` + item_name + `" , `+ 
