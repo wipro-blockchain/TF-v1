@@ -675,7 +675,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 // ============================================================================================================================
 func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 9 {
+	if len(args) != 17 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
 	fmt.Println("start create_agreement")
@@ -706,6 +706,31 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	if len(args[8]) <= 0 {
 		return nil, errors.New("9th argument must be a non-empty string")
 	}
+	if len(args[9]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}
+	if len(args[14]) <= 0 {
+		return nil, errors.New("15th argument must be a non-empty string")
+	}
+	if len(args[15]) <= 0 {
+		return nil, errors.New("16th argument must be a non-empty string")
+	}
+	if len(args[16]) <= 0 {
+		return nil, errors.New("17th argument must be a non-empty string")
+	}
+	
 	agreementId := args[0]
 	transId := args[1]
 	agreement_status := args[2]
