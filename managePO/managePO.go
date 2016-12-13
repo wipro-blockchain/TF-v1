@@ -206,6 +206,59 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 // ============================================================================================================================
 func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp, buyerName, errResp string
+	var poIndex, valIndex []string
+	fmt.Println("start get_AllPO")
+	var err error
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+	}
+	buyerName = args[0]
+	poAsBytes, err := stub.GetState(POIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get PO index")
+	}
+	fmt.Print("poAsBytes : ")
+	fmt.Println(poAsBytes)
+	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
+	fmt.Print("poIndex : ")
+	fmt.Println(poIndex)
+	jsonResp = "{"
+	for i,val := range poIndex{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
+		valueAsBytes, err := stub.GetState(val)
+		if err != nil {
+			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+			return nil, errors.New(errResp)
+		}
+		fmt.Print("valueAsBytes : ")
+		fmt.Println(valueAsBytes)
+		json.Unmarshal(valueAsBytes, &valIndex)
+		fmt.Print("valIndex: ")
+		for j,value := range valIndex{
+			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
+			fmt.Println("valIndex[j]")
+			fmt.Println(valIndex[j])
+			if valIndex[j] == buyerName{
+				fmt.Println("Buyer found")
+			}
+		}
+		jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+		if i != len(poIndex) {
+			jsonResp = jsonResp + ","
+		}
+	}
+	fmt.Println("len(poIndex) : ")
+	fmt.Println(len(poIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println("jsonResp : " + jsonResp)
+	fmt.Print("jsonResp in bytes : ")
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("end get_AllPO")
+	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
+	return []byte(jsonResp), nil
+											//send it onward
+}
+	/*var jsonResp, buyerName, errResp string
 	var poIndex []string
 	var err error
 	if len(args) != 1 {
@@ -244,41 +297,9 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	}
 	jsonResp = jsonResp + "}"
 	fmt.Println("jsonResp" + jsonResp)
-	return []byte(jsonResp), nil
-	/*var jsonResp, errResp,buyerName string
-	var poIndex []string
-	var err error
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
-	}
-	buyerName = args[0]
-	poAsBytes, err := stub.GetState(POIndexStr)
-	if err != nil {
-		return nil, errors.New("Failed to get PO index")
-	}
-	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	jsonResp = "{"
-	for i,val := range poIndex{
-		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
-		valueAsBytes, err := stub.GetState(val)
-		if err != nil {
-			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
-			return nil, errors.New(errResp)
-		}
-		
-		if buyerName == string(valueAsBytes[1]){
-		//if buyerName == valueAsBytes[1] {
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			if i != len(poIndex) {
-				jsonResp = jsonResp + ","
-			}
-		}
-		
-	}
-	jsonResp = jsonResp + "}"
-	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
 	return []byte(jsonResp), nil*/
-}
+	
+//}
 // ============================================================================================================================
 //  getPO_bySeller - display PO details for a specific Seller from chaincode state
 // ============================================================================================================================
@@ -333,8 +354,6 @@ func (t *ManagePO) get_AllPO(stub shim.ChaincodeStubInterface, args []string) ([
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
 	fmt.Print("poIndex : ")
 	fmt.Println(poIndex)
-	fmt.Println("len(poIndex) : ")
-	fmt.Println(len(poIndex))
 	jsonResp = "{"
 	for i,val := range poIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
