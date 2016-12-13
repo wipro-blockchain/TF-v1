@@ -266,84 +266,65 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_byBuyer")
 	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
-	return []byte(jsonResp), nil
-											//send it onward
+	return []byte(jsonResp), nil											//send it onward
 }
-	/*var jsonResp, buyerName, errResp string
-	var poIndex []string
-	var err error
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
-	}
-	poAsBytes, err := stub.GetState(POIndexStr)
-	if err != nil {
-		return nil, errors.New("Failed to get PO index")
-	}
-	fmt.Print("poAsBytes: ")
-	fmt.Println(poAsBytes)
-	buyerName = args[0]
-	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	fmt.Print("poIndex: ")
-	fmt.Println(poIndex)
-	jsonResp = "{"
-	for i,val := range poIndex{
-		var valIndex []string
-		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for PO by buyer name")
-		valueAsBytes, err := stub.GetState(val)
-		if err != nil {
-			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
-			return nil, errors.New(errResp)
-		}
-		fmt.Print("valueAsBytes: ")
-		fmt.Println(valueAsBytes)
-		json.Unmarshal(valueAsBytes, &valIndex)
-		fmt.Print("valIndex: ")
-		fmt.Println(valIndex)
-		if valIndex[2] == buyerName { 
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-		}
-		if i != len(poIndex) {
-			jsonResp = jsonResp + ","
-		}
-	}
-	jsonResp = jsonResp + "}"
-	fmt.Println("jsonResp" + jsonResp)
-	return []byte(jsonResp), nil*/
 	
-//}
 // ============================================================================================================================
 //  getPO_bySeller - display PO details for a specific Seller from chaincode state
 // ============================================================================================================================
 func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var errResp, sellerName string
-	var poIndex, valIndex []string
+	var jsonResp, sellerName, errResp string
+	var poIndex []string
+	var valIndex PO
+	fmt.Println("start getPO_bySeller")
 	var err error
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
 	sellerName = args[0]
+	fmt.Println("buyerName" + sellerName)
 	poAsBytes, err := stub.GetState(POIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get PO index")
 	}
+	fmt.Print("poAsBytes : ")
+	fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	//jsonResp = "{"
+	fmt.Print("poIndex : ")
+	fmt.Println(poIndex)
+	fmt.Println("len(poIndex) : ")
+	fmt.Println(len(poIndex))
+	jsonResp = "{"
 	for i,val := range poIndex{
-		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all PO")
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getting sellerName")
 		valueAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
 			return nil, errors.New(errResp)
 		}
+		fmt.Print("valueAsBytes : ")
+		fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
-		for j,value := range valIndex{
-			fmt.Println(strconv.Itoa(j) + " - looking at " + value + " for all PO")
-			if value == sellerName {
-				return valueAsBytes,nil
-			}
+		fmt.Print("valIndex: ")
+		fmt.Print(valIndex)
+		if valIndex.SellerName == sellerName{
+			fmt.Println("Seller found")
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			fmt.Println("jsonResp inside if")
+			fmt.Println(jsonResp)
+		}
+		if i != len(poIndex) {
+			jsonResp = jsonResp + ","
 		}
 	}
-	return nil, nil													//send it onward
+	
+	jsonResp = jsonResp + "}"
+	fmt.Println("jsonResp : " + jsonResp)
+	fmt.Print("jsonResp in bytes : ")
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("end getPO_bySeller")
+	//jsonAsBytes, _ := json.Marshal(valueAsBytes)
+	return []byte(jsonResp), nil											//send it onward
 }
 // ============================================================================================================================
 //  get_AllPO- display details of all PO from chaincode state
@@ -485,22 +466,6 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, err
 	}
-
-	//get the PO index
-	/*poIndexAsBytes, err := stub.GetState(POIndexStr)
-	if err != nil {
-		return nil, errors.New("Failed to get PO index")
-	}
-	var poIndex []string
-	json.Unmarshal(poIndexAsBytes, &poIndex)							//un stringify it aka JSON.parse()
-	
-	//append
-	poIndex = append(poIndex, transId)									//add PO transID to index list
-	fmt.Println("! PO index: ", poIndex)
-	jsonAsBytes, _ := json.Marshal(poIndex)
-	err = stub.PutState(POIndexStr, jsonAsBytes)						//store name of PO
-
-	fmt.Println("- end create PO")*/
 	return nil, nil
 }
 
