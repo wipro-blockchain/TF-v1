@@ -455,12 +455,12 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"transId": "` + res.TransID + `" , `+
 		`"sellerName": "` + res.SellerName + `" , `+
 		`"buyerName": "` + res.BuyerName + `" , `+
-		`"ExpectedDeliveryDate": "` + res.ExpectedDeliveryDate + `" , `+ 
-		`"PO_status": "` + res.PO_status + `" , `+ 
-		`"PO_date": "` + res.PO_date + `" , `+ 
-		`"id": "` + res.ItemID + `" , `+ 
-		`"name": "` + res.Item_name + `" , `+ 
-		`"quantity": "` +  strconv.Itoa(res.Item_quantity) + `" `+ 
+		`"expectedDeliveryDate": "` + res.ExpectedDeliveryDate + `" , `+ 
+		`"po_status": "` + res.PO_status + `" , `+ 
+		`"po_date": "` + res.PO_date + `" , `+ 
+		`"item_id": "` + res.ItemID + `" , `+ 
+		`"item_name": "` + res.Item_name + `" , `+ 
+		`"item_quantity": "` +  strconv.Itoa(res.Item_quantity) + `" `+ 
 		`}`
 	err = stub.PutState(transId, []byte(order))									//store PO with id as key
 	if err != nil {
@@ -543,12 +543,12 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"transId": "` + transId + `" , `+
 		`"sellerName": "` + sellerName + `" , `+
 		`"buyerName": "` + buyerName + `" , `+
-		`"ExpectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
-		`"PO_status": "` + po_status + `" , `+ 
-		`"PO_date": "` + po_date + `" , `+ 
-		`"id": "` + item_id + `" , `+ 
-		`"name": "` + item_name + `" , `+ 
-		`"quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
+		`"expectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
+		`"po_status": "` + po_status + `" , `+ 
+		`"po_date": "` + po_date + `" , `+ 
+		`"item_id": "` + item_id + `" , `+ 
+		`"item_name": "` + item_name + `" , `+ 
+		`"item_quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
 		`}`
 	fmt.Println("order: " + order)
 	fmt.Print("order in bytes array: ")
