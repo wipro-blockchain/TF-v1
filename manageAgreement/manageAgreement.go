@@ -237,7 +237,7 @@ func (t *ManageAgreement) getAgreement_bySeller(stub shim.ChaincodeStubInterface
 	}
 	// set seller name
 	seller_name = args[0]
-	fmt.Println("seller_name" + seller_name)
+	fmt.Println("seller_name: " + seller_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -340,7 +340,7 @@ func (t *ManageAgreement) getAgreement_byShipper(stub shim.ChaincodeStubInterfac
 	}
 	// set Shipper name
 	shipper_name = args[0]
-	fmt.Println("shipper_name" + shipper_name)
+	fmt.Println("shipper_name: " + shipper_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -398,7 +398,7 @@ func (t *ManageAgreement) getAgreement_byBuyerBank(stub shim.ChaincodeStubInterf
 	}
 	// set Buyer Bank
 	bb_name = args[0]
-	fmt.Println("bb_name" + bb_name)
+	fmt.Println("bb_name: " + bb_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -456,7 +456,7 @@ func (t *ManageAgreement) getAgreement_bySellerBank(stub shim.ChaincodeStubInter
 	}
 	// set seller bank 
 	sb_name = args[0]
-	fmt.Println("sb_name" + sb_name)
+	fmt.Println("sb_name: " + sb_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -512,9 +512,9 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
 	}
-	// set seller name
+	// set Port authority name
 	agreementPortAuth_name = args[0]
-	fmt.Println("agreementPortAuth_name" + agreementPortAuth_name)
+	fmt.Println("agreementPortAuth_name: " + agreementPortAuth_name)
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement index")
@@ -646,7 +646,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	
 	//build the Agreement json string manually
 	order := 	`{`+
-		`"agreementId": "` + agreementId + `" , `+
+		`"agreementId": "` + res.AgreementID + `" , `+
 		`"transId": "` + res.TransID + `" , `+ 
 		`"agreement_status": "` + res.Agreement_status + `" , `+ 
 		`"buyer_name": "` + res.BuyerName + `" , `+
@@ -762,7 +762,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	json.Unmarshal(agreementAsBytes, &res)
 	fmt.Print("res: ")
 	fmt.Println(res)
-	if res.TransID == agreementId{
+	if res.AgreementID == agreementId{
 		fmt.Println("This Agreement arleady exists: " + agreementId)
 		fmt.Println(res);
 		return nil, errors.New("This Agreement arleady exists")				//all stop a Agreement by this name exists
