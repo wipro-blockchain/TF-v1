@@ -378,8 +378,8 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.SellerName = args[1]
 		res.BuyerName = args[2]
 		res.ExpectedDeliveryDate = args[3]
-		res.PO_status = args[4]
-		res.PO_date = args[5]
+		res.PO_date = args[4]
+		res.PO_status = args[5]
 		res.ItemID = args[6]
 		res.Item_name = args[7]
 		res.Item_quantity, err = strconv.Atoi(args[8])
@@ -394,8 +394,8 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"sellerName": "` + res.SellerName + `" , `+
 		`"buyerName": "` + res.BuyerName + `" , `+
 		`"expectedDeliveryDate": "` + res.ExpectedDeliveryDate + `" , `+ 
-		`"po_status": "` + res.PO_status + `" , `+ 
 		`"po_date": "` + res.PO_date + `" , `+ 
+		`"po_status": "` + res.PO_status + `" , `+ 
 		`"item_id": "` + res.ItemID + `" , `+ 
 		`"item_name": "` + res.Item_name + `" , `+ 
 		`"item_quantity": "` +  strconv.Itoa(res.Item_quantity) + `" `+ 
@@ -446,8 +446,8 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	sellerName := args[1]
 	buyerName := args[2]
 	expectedDeliveryDate := args[3]
-	po_status := args[4]
-	po_date := args[5]
+	po_date := args[4]
+	po_status := args[5]
 	item_id := args[6]
 	item_name := args[7]
 	item_quantity, err := strconv.Atoi(args[8])
@@ -476,8 +476,8 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"sellerName": "` + sellerName + `" , `+
 		`"buyerName": "` + buyerName + `" , `+
 		`"expectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
-		`"po_status": "` + po_status + `" , `+ 
 		`"po_date": "` + po_date + `" , `+ 
+		`"po_status": "` + po_status + `" , `+ 
 		`"item_id": "` + item_id + `" , `+ 
 		`"item_name": "` + item_name + `" , `+ 
 		`"item_quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
