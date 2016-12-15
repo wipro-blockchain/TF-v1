@@ -41,9 +41,9 @@ type PO struct{							// Attributes of a PO
 	ExpectedDeliveryDate string `json:"expectedDeliveryDate"`
 	PO_status string `json:"po_status"`
 	PO_date string `json:"po_date"`
-	ItemIds string `json:"item_ids"`
-	Item_names string `json:"item_names"`
-	Item_quantities string `json:"item_quantities"`
+	ItemId string `json:"item_id"`
+	Item_name string `json:"item_name"`
+	Item_quantity string `json:"item_quantity"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for PO management
@@ -380,9 +380,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.ExpectedDeliveryDate = args[3]
 		res.PO_date = args[4]
 		res.PO_status = args[5]
-		res.ItemIds = args[6]
-		res.Item_names = args[7]
-		res.Item_quantities = args[8]
+		res.ItemId = args[6]
+		res.Item_name = args[7]
+		res.Item_quantity = args[8]
 	}
 	
 	//build the PO json string manually
@@ -393,9 +393,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"expectedDeliveryDate": "` + res.ExpectedDeliveryDate + `" , `+ 
 		`"po_date": "` + res.PO_date + `" , `+ 
 		`"po_status": "` + res.PO_status + `" , `+ 
-		`"item_ids": "` + res.ItemIds + `" , `+ 
-		`"item_names": "` + res.Item_names + `" , `+ 
-		`"item_quantities": "` +  res.Item_quantities + `" `+ 
+		`"item_id": "` + res.ItemId + `" , `+ 
+		`"item_name": "` + res.Item_name + `" , `+ 
+		`"item_quantity": "` +  res.Item_quantity + `" `+ 
 		`}`
 	err = stub.PutState(transId, []byte(order))									//store PO with id as key
 	if err != nil {
@@ -445,9 +445,9 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	expectedDeliveryDate := args[3]
 	po_date := args[4]
 	po_status := args[5]
-	item_ids := args[6]
-	item_names := args[7]
-	item_quantities := args[8]
+	item_id := args[6]
+	item_name := args[7]
+	item_quantity := args[8]
 	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
@@ -473,9 +473,9 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"expectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
 		`"po_date": "` + po_date + `" , `+ 
 		`"po_status": "` + po_status + `" , `+ 
-		`"item_ids": "` + item_ids + `" , `+ 
-		`"item_names": "` + item_names + `" , `+ 
-		`"item_quantities": "` +  item_quantities + `" `+ 
+		`"item_id": "` + item_id + `" , `+ 
+		`"item_name": "` + item_name + `" , `+ 
+		`"item_quantity": "` +  item_quantity + `" `+ 
 		`}`
 		//fmt.Println("order: " + order)
 		fmt.Print("order in bytes array: ")
