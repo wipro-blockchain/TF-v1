@@ -41,9 +41,9 @@ type PO struct{							// Attributes of a PO
 	ExpectedDeliveryDate string `json:"expectedDeliveryDate"`
 	PO_status string `json:"po_status"`
 	PO_date string `json:"po_date"`
-	ItemID string `json:"item_id"`
-	Item_name string `json:"item_name"`
-	Item_quantity int `json:"item_quantity"`
+	ItemIds string `json:"item_ids"`
+	Item_names string `json:"item_names"`
+	Item_quantities string `json:"item_quantities"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for PO management
@@ -380,12 +380,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.ExpectedDeliveryDate = args[3]
 		res.PO_date = args[4]
 		res.PO_status = args[5]
-		res.ItemID = args[6]
-		res.Item_name = args[7]
-		res.Item_quantity, err = strconv.Atoi(args[8])
-		if err != nil {
-			return nil, errors.New("Expecting integer value for asset holding")
-		}
+		res.ItemIds = args[6]
+		res.Item_names = args[7]
+		res.Item_quantities = args[8]
 	}
 	
 	//build the PO json string manually
@@ -396,9 +393,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"expectedDeliveryDate": "` + res.ExpectedDeliveryDate + `" , `+ 
 		`"po_date": "` + res.PO_date + `" , `+ 
 		`"po_status": "` + res.PO_status + `" , `+ 
-		`"item_id": "` + res.ItemID + `" , `+ 
-		`"item_name": "` + res.Item_name + `" , `+ 
-		`"item_quantity": "` +  strconv.Itoa(res.Item_quantity) + `" `+ 
+		`"item_ids": "` + res.ItemIds + `" , `+ 
+		`"item_names": "` + res.Item_names + `" , `+ 
+		`"item_quantities": "` +  res.Item_quantities + `" `+ 
 		`}`
 	err = stub.PutState(transId, []byte(order))									//store PO with id as key
 	if err != nil {
@@ -448,12 +445,10 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	expectedDeliveryDate := args[3]
 	po_date := args[4]
 	po_status := args[5]
-	item_id := args[6]
-	item_name := args[7]
-	item_quantity, err := strconv.Atoi(args[8])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding")
-	}
+	item_ids := args[6]
+	item_names := args[7]
+	item_quantities := args[8]
+	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
 		return nil, errors.New("Failed to get PO transID")
@@ -478,9 +473,9 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"expectedDeliveryDate": "` + expectedDeliveryDate + `" , `+ 
 		`"po_date": "` + po_date + `" , `+ 
 		`"po_status": "` + po_status + `" , `+ 
-		`"item_id": "` + item_id + `" , `+ 
-		`"item_name": "` + item_name + `" , `+ 
-		`"item_quantity": "` +  strconv.Itoa(item_quantity) + `" `+ 
+		`"item_ids": "` + item_ids + `" , `+ 
+		`"item_names": "` + item_names + `" , `+ 
+		`"item_quantities": "` +  item_quantities + `" `+ 
 		`}`
 		//fmt.Println("order: " + order)
 		fmt.Print("order in bytes array: ")
