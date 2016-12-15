@@ -45,9 +45,9 @@ type Agreement struct{							// Attributes of a Agreement
 	SB_name string `json:"sb_name"`	
 	PortAuthName string `json:"agreementPortAuth_name"`
 	AgreementCU_date string `json:"agreementCU_date"`
-	ItemID string `json:"item_id"`
-	Item_name string `json:"item_name"`
-	Item_quantity int `json:"item_quantity"`
+	ItemIds string `json:"item_ids"`
+	Item_names string `json:"item_names"`
+	Item_quantities string `json:"item_quantities"`
 	Total_Value string `json:"total_value"`
 	DocumentName string `json:"document_name"`
 	DocumentURL string `json:"document_url"`
@@ -633,17 +633,15 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.SB_name	= args[7]
 		res.PortAuthName = args[8]
 		res.AgreementCU_date = args[9]
-		res.ItemID = args[10]
-		res.Item_name = args[11]
-		res.Total_Value = args[12]
-		res.DocumentName = args[13]
-		res.DocumentURL = args[14]
-		res.TC_Text = args[15]
-		res.Item_quantity, err = strconv.Atoi(args[16])
-		if err != nil {
-			return nil, errors.New("Expecting integer value for asset holding")
+		res.ItemIds = args[10]
+		res.Item_names = args[11]
+		res.Item_quantities = args[12]
+		res.Total_Value = args[13]
+		res.DocumentName = args[14]
+		res.DocumentURL = args[15]
+		res.TC_Text = args[16]
+		
 		}
-	}
 	
 	//build the Agreement json string manually
 	order := 	`{`+
@@ -657,9 +655,9 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sb_name": "` + res.SB_name + `" , `+ 	
 		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
 		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
-		`"item_id": "` + res.ItemID + `" , `+ 
-		`"item_name": "` + res.Item_name + `" , `+ 
-		`"item_quantity": "` + strconv.Itoa(res.Item_quantity) + `" , `+ 
+		`"item_ids": "` + res.ItemIds + `" , `+ 
+		`"item_names": "` + res.Item_names + `" , `+ 
+		`"item_quantities": "` + res.Item_quantities + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
@@ -743,16 +741,15 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	sb_name	:= args[7]
 	agreementPortAuth_name := args[8]
 	agreementCU_date := args[9]
-	item_id := args[10]
-	item_name := args[11]
-	total_value := args[12]
-	document_name := args[13]
-	document_url := args[14]
-	tc_text := args[15]
-	item_quantity, err := strconv.Atoi(args[16])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding")
-	}
+	item_ids := args[10]
+	item_names := args[11]
+	item_quantities:= args[12]
+	total_value := args[13]
+	document_name := args[14]
+	document_url := args[15]
+	tc_text := args[16]
+	
+	
 	agreementAsBytes, err := stub.GetState(agreementId)
 	if err != nil {
 		return nil, errors.New("Failed to get Agreement transID")
@@ -781,9 +778,9 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sb_name": "` + sb_name + `" , `+ 	
 		`"agreementPortAuth_name": "` + agreementPortAuth_name + `" , `+ 
 		`"agreementCU_date": "` + agreementCU_date + `" , `+ 
-		`"item_id": "` + item_id + `" , `+ 
-		`"item_name": "` + item_name + `" , `+ 
-		`"item_quantity": "` + strconv.Itoa(item_quantity) + `" , `+ 
+		`"item_ids": "` + item_ids + `" , `+ 
+		`"item_names": "` + item_names + `" , `+ 
+		`"item_quantities": "` + item_quantities + `" , `+ 
 		`"total_value": "` + total_value + `" , `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
