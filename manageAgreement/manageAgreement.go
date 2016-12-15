@@ -45,9 +45,9 @@ type Agreement struct{							// Attributes of a Agreement
 	SB_name string `json:"sb_name"`	
 	PortAuthName string `json:"agreementPortAuth_name"`
 	AgreementCU_date string `json:"agreementCU_date"`
-	ItemIds string `json:"item_ids"`
-	Item_names string `json:"item_names"`
-	Item_quantities string `json:"item_quantities"`
+	ItemId string `json:"item_id"`
+	Item_name string `json:"item_name"`
+	Item_quantity string `json:"item_quantity"`
 	Total_Value string `json:"total_value"`
 	DocumentName string `json:"document_name"`
 	DocumentURL string `json:"document_url"`
@@ -633,9 +633,9 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.SB_name	= args[7]
 		res.PortAuthName = args[8]
 		res.AgreementCU_date = args[9]
-		res.ItemIds = args[10]
-		res.Item_names = args[11]
-		res.Item_quantities = args[12]
+		res.ItemId = args[10]
+		res.Item_name = args[11]
+		res.Item_quantity = args[12]
 		res.Total_Value = args[13]
 		res.DocumentName = args[14]
 		res.DocumentURL = args[15]
@@ -655,9 +655,9 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sb_name": "` + res.SB_name + `" , `+ 	
 		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
 		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
-		`"item_ids": "` + res.ItemIds + `" , `+ 
-		`"item_names": "` + res.Item_names + `" , `+ 
-		`"item_quantities": "` + res.Item_quantities + `" , `+ 
+		`"item_id": "` + res.ItemId + `" , `+ 
+		`"item_name": "` + res.Item_name + `" , `+ 
+		`"item_quantity": "` + res.Item_quantity + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
@@ -741,9 +741,9 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	sb_name	:= args[7]
 	agreementPortAuth_name := args[8]
 	agreementCU_date := args[9]
-	item_ids := args[10]
-	item_names := args[11]
-	item_quantities:= args[12]
+	item_id := args[10]
+	item_name := args[11]
+	item_quantity:= args[12]
 	total_value := args[13]
 	document_name := args[14]
 	document_url := args[15]
@@ -778,9 +778,9 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sb_name": "` + sb_name + `" , `+ 	
 		`"agreementPortAuth_name": "` + agreementPortAuth_name + `" , `+ 
 		`"agreementCU_date": "` + agreementCU_date + `" , `+ 
-		`"item_ids": "` + item_ids + `" , `+ 
-		`"item_names": "` + item_names + `" , `+ 
-		`"item_quantities": "` + item_quantities + `" , `+ 
+		`"item_id": "` + item_id + `" , `+ 
+		`"item_name": "` + item_name + `" , `+ 
+		`"item_quantity": "` + item_quantity + `" , `+ 
 		`"total_value": "` + total_value + `" , `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
