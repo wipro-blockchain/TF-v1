@@ -44,6 +44,9 @@ type PO struct{							// Attributes of a PO
 	ItemId string `json:"item_id"`
 	Item_name string `json:"item_name"`
 	Item_quantity string `json:"item_quantity"`
+	Price string `json:"price"`
+	Buyer_sign string `json:"buyer_sign"`
+	Seller_sign string `json:"seller_sign"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for PO management
@@ -65,7 +68,7 @@ func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args 
 	}
 	// Initialize the chaincode
 	msg = args[0]
-	fmt.Println("ManagePO chaincode is deployed with the message : "+ msg);
+	fmt.Println("ManagePO chaincode is deployed.");
 	
 	// Write the state to the ledger
 	err = stub.PutState("abc", []byte(msg))				//making a test var "abc", I find it handy to read/write to it right away to test the network
@@ -358,8 +361,8 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	var jsonResp string
 	var err error
 	fmt.Println("start update_po")
-	if len(args) != 9 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 9.")
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12.")
 	}
 	// set transId
 	transId := args[0]
@@ -383,6 +386,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.ItemId = args[6]
 		res.Item_name = args[7]
 		res.Item_quantity = args[8]
+		res.Price = args[9]
+		res.Buyer_sign = args[10]
+		res.Seller_sign = args[11]
 	}
 	
 	//build the PO json string manually
@@ -396,6 +402,9 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_id": "` + res.ItemId + `" , `+ 
 		`"item_name": "` + res.Item_name + `" , `+ 
 		`"item_quantity": "` +  res.Item_quantity + `" `+ 
+		`"price": "` + res.Price + `" , `+ 
+		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
+		`"seller_sign": "` +  res.Seller_sign + `" `+ 
 		`}`
 	err = stub.PutState(transId, []byte(order))									//store PO with id as key
 	if err != nil {
@@ -408,11 +417,11 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 // ============================================================================================================================
 func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 9 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 9")
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("start create_po")
-	if len(args[0]) <= 0 {
+	/*if len(args[0]) <= 0 {
 		return nil, errors.New("1st argument must be a non-empty string")
 	}
 	if len(args[1]) <= 0 {
@@ -438,7 +447,7 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	if len(args[8]) <= 0 {
 		return nil, errors.New("9th argument must be a non-empty string")
-	}
+	}*/
 	transId := args[0]
 	sellerName := args[1]
 	buyerName := args[2]
@@ -448,6 +457,9 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	item_id := args[6]
 	item_name := args[7]
 	item_quantity := args[8]
+	price := args[9]
+	buyer_sign := args[10]
+	seller_sign := args[11]
 	
 	poAsBytes, err := stub.GetState(transId)
 	if err != nil {
@@ -476,6 +488,9 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_id": "` + item_id + `" , `+ 
 		`"item_name": "` + item_name + `" , `+ 
 		`"item_quantity": "` +  item_quantity + `" `+ 
+		`"price": "` + price + `" , `+ 
+		`"buyer_sign": "` + buyer_sign + `" , `+ 
+		`"seller_sign": "` +  seller_sign + `" `+ 
 		`}`
 		//fmt.Println("order: " + order)
 		fmt.Print("order in bytes array: ")
