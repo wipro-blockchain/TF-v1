@@ -47,6 +47,7 @@ type Payment struct{
 	PaymentStatus string `json:"paymentStatus"`
 	PaymentCUDate string `json:"paymentCUDate"`
 	PaymentDeadlineDate string `json:"paymentDeadlineDate"`
+	BuyerBank_sign string `json:"buyerBank_sign"`
 }
 
 
@@ -400,6 +401,7 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 		res.PaymentCUDate = args[7]
 		res.PaymentStatus = args[8]
 		res.PaymentDeadlineDate = args[9]
+		res.BuyerBank_sign = args[10]
 	}
 	
 	//build the Payment json string manually
@@ -413,7 +415,8 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 			`"amountTransferred" : "` + res.AmountTransferred   + `", `+
 			`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
 			`"paymentStatus" : "` + res.PaymentStatus   + `", `+
-			`"PpaymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `"`+
+			`"paymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `"`+
+			`"buyerBank_sign " : "` + res.BuyerBank_sign   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
@@ -430,12 +433,12 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	if len(args) != 11 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 11")
 	}
 	//input sanitation
 	fmt.Println("- start createPayment")
-	if len(args[0]) <= 0 {
+	/*if len(args[0]) <= 0 {
 		return nil, errors.New("1st argument must be a non-empty string")
 	}
 	if len(args[1]) <= 0 {
@@ -465,7 +468,7 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
-
+*/
 	paymentId := args[0]
 	agreementId := args[1]
 	buyerName := args[2]
@@ -476,6 +479,7 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	paymentCUDate := args[7]
 	paymentStatus := args[8]
 	paymentDeadlineDate := args[9]
+	buyerBank_sign := args[10]
 
 	paymentAsBytes, err := stub.GetState(paymentId)
 	if err != nil {
@@ -506,6 +510,7 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 			`"paymentCUDate" : "` + paymentCUDate   + `", `+
 			`"paymentStatus" : "` + paymentStatus   + `", `+
 			`"paymentDeadlineDate " : "` + paymentDeadlineDate   + `"`+
+			`"buyerBank_sign " : "` + buyerBank_sign   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
