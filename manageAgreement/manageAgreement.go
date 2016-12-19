@@ -661,7 +661,6 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"shipper_name": "` + res.ShipperName + `" , `+ 
 		`"bb_name": "` + res.BB_name + `" , `+ 
 		`"sb_name": "` + res.SB_name + 
-	agreementAsBytes, err := stub.GetState(agreementId)		`" , `+ 	
 		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
 		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
 		`"item_id": "` + res.ItemId + `" , `+ 
