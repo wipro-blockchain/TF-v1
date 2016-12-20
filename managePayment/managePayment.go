@@ -74,7 +74,7 @@ func (t *ManagePayment) Init(stub shim.ChaincodeStubInterface, function string, 
 	// Initialize the chaincode
 	
 	msg = args[0]
-	fmt.Println("ManagePayment chaincode is deployed with the message : "+ msg)
+	fmt.Println("ManagePayment chaincode is deployed successfully.")
 
 	// Write the state to the ledger
 	err = stub.PutState("abc", []byte(msg))				//making a test var "abc" to read/write check right away to test the network
