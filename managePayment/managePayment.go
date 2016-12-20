@@ -415,7 +415,7 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 			`"amountTransferred" : "` + res.AmountTransferred   + `", `+
 			`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
 			`"paymentStatus" : "` + res.PaymentStatus   + `", `+
-			`"paymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `"`+
+			`"paymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `", `+
 			`"buyerBank_sign " : "` + res.BuyerBank_sign   + `"`+
 			`}`
 
@@ -509,7 +509,7 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 			`"amountTransferred" : "` + amountTransferred   + `", `+
 			`"paymentCUDate" : "` + paymentCUDate   + `", `+
 			`"paymentStatus" : "` + paymentStatus   + `", `+
-			`"paymentDeadlineDate " : "` + paymentDeadlineDate   + `"`+
+			`"paymentDeadlineDate " : "` + paymentDeadlineDate   + `", `+
 			`"buyerBank_sign " : "` + buyerBank_sign   + `"`+
 			`}`
 
