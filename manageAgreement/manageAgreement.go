@@ -77,7 +77,7 @@ func (t *ManageAgreement) Init(stub shim.ChaincodeStubInterface, function string
 	}
 	// Initialize the chaincode
 	msg = args[0]
-	fmt.Println("ManageAgreement chaincode is deployed.");
+	fmt.Println("ManageAgreement chaincode is deployed successfully.");
 	
 	// Write the state to the ledger
 	err = stub.PutState("abc", []byte(msg))				//making a test var "abc", I find it handy to read/write to it right away to test the network
