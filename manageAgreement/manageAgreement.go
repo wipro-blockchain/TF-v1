@@ -660,7 +660,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"seller_name": "` + res.SellerName + `" , `+
 		`"shipper_name": "` + res.ShipperName + `" , `+ 
 		`"bb_name": "` + res.BB_name + `" , `+ 
-		`"sb_name": "` + res.SB_name + 
+		`"sb_name": "` + res.SB_name + `" , `+ 
 		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
 		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
 		`"item_id": "` + res.ItemId + `" , `+ 
@@ -669,7 +669,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
-		`"tc_text" : "` + res.TC_Text + `" `+ 
+		`"tc_text" : "` + res.TC_Text + `", `+ 
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + res.BuyerBank_sign + `" , `+ 
 		`"seller_sign": "` + res.Seller_sign + `" , `+ 
@@ -743,7 +743,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("17th argument must be a non-empty string")
 	}*/
 	
-	agreementId := args[0]
+	agreementId := args[0]
 	transId := args[1]
 	agreement_status := args[2]
 	buyer_name := args[3]
@@ -800,7 +800,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"total_value": "` + total_value + `" , `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
-		`"tc_text": "` + tc_text + `" `+ 
+		`"tc_text": "` + tc_text + `", `+ 
 		`"buyer_sign": "` + buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + buyerBank_sign + `" , `+ 
 		`"seller_sign": "` + seller_sign + `" , `+ 
