@@ -401,7 +401,7 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"po_status": "` + res.PO_status + `" , `+ 
 		`"item_id": "` + res.ItemId + `" , `+ 
 		`"item_name": "` + res.Item_name + `" , `+ 
-		`"item_quantity": "` +  res.Item_quantity + `" `+ 
+		`"item_quantity": "` +  res.Item_quantity + `", `+ 
 		`"price": "` + res.Price + `" , `+ 
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
 		`"seller_sign": "` +  res.Seller_sign + `" `+ 
@@ -487,7 +487,7 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"po_status": "` + po_status + `" , `+ 
 		`"item_id": "` + item_id + `" , `+ 
 		`"item_name": "` + item_name + `" , `+ 
-		`"item_quantity": "` +  item_quantity + `" `+ 
+		`"item_quantity": "` +  item_quantity + `", `+ 
 		`"price": "` + price + `" , `+ 
 		`"buyer_sign": "` + buyer_sign + `" , `+ 
 		`"seller_sign": "` +  seller_sign + `" `+ 
