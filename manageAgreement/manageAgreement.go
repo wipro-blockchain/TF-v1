@@ -743,7 +743,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("17th argument must be a non-empty string")
 	}*/
 	
-	agreementId := args[0]
+	agreementId := args[0]
 	transId := args[1]
 	agreement_status := args[2]
 	buyer_name := args[3]
