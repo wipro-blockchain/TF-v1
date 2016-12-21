@@ -48,6 +48,8 @@ type Payment struct{
 	PaymentCUDate string `json:"paymentCUDate"`
 	PaymentDeadlineDate string `json:"paymentDeadlineDate"`
 	BuyerBank_sign string `json:"buyerBank_sign"`
+	BB_name string `json:"bb_name"`
+	SB_name string `json:"sb_name"`
 }
 
 
@@ -374,8 +376,8 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 	var err error
 	fmt.Println("running updatePayment()")
 
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10.")
+	if len(args) != 13 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 13.")
 	}
 	//set paymentId
 	paymentId := args[0]
@@ -402,6 +404,8 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 		res.PaymentStatus = args[8]
 		res.PaymentDeadlineDate = args[9]
 		res.BuyerBank_sign = args[10]
+		res.BB_name = args[11]
+		res.SB_name = args[12]
 	}
 	
 	//build the Payment json string manually
@@ -416,7 +420,9 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 			`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
 			`"paymentStatus" : "` + res.PaymentStatus   + `", `+
 			`"paymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `", `+
-			`"buyerBank_sign " : "` + res.BuyerBank_sign   + `"`+
+			`"buyerBank_sign " : "` + res.BuyerBank_sign   + `", `+
+	                `"bb_name " : "` + res.BB_name   + `", `+
+			`"sb_name " : "` + res.SB_name   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
@@ -433,8 +439,8 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 11 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 11")
+	if len(args) != 13 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 13")
 	}
 	//input sanitation
 	fmt.Println("- start createPayment")
@@ -480,6 +486,8 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	paymentStatus := args[8]
 	paymentDeadlineDate := args[9]
 	buyerBank_sign := args[10]
+	bb_name := args[11]
+	sb_name := args[12]
 
 	paymentAsBytes, err := stub.GetState(paymentId)
 	if err != nil {
@@ -510,7 +518,9 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 			`"paymentCUDate" : "` + paymentCUDate   + `", `+
 			`"paymentStatus" : "` + paymentStatus   + `", `+
 			`"paymentDeadlineDate " : "` + paymentDeadlineDate   + `", `+
-			`"buyerBank_sign " : "` + buyerBank_sign   + `"`+
+			`"buyerBank_sign " : "` + buyerBank_sign   + `", `+
+			`"bb_name " : "` + bb_name   + `", `+
+			`"sb_name " : "` + sb_name   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
