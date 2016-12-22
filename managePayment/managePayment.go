@@ -419,10 +419,10 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 			`"amountTransferred" : "` + res.AmountTransferred   + `", `+
 			`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
 			`"paymentStatus" : "` + res.PaymentStatus   + `", `+
-			`"paymentDeadlineDate " : "` + res.PaymentDeadlineDate   + `", `+
-			`"buyerBank_sign " : "` + res.BuyerBank_sign   + `", `+
-	                `"bb_name " : "` + res.BB_name   + `", `+
-			`"sb_name " : "` + res.SB_name   + `"`+
+			`"paymentDeadlineDate" : "` + res.PaymentDeadlineDate   + `", `+
+			`"buyerBank_sign" : "` + res.BuyerBank_sign   + `", `+
+	                `"bb_name" : "` + res.BB_name   + `", `+
+			`"sb_name" : "` + res.SB_name   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
@@ -517,10 +517,10 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 			`"amountTransferred" : "` + amountTransferred   + `", `+
 			`"paymentCUDate" : "` + paymentCUDate   + `", `+
 			`"paymentStatus" : "` + paymentStatus   + `", `+
-			`"paymentDeadlineDate " : "` + paymentDeadlineDate   + `", `+
-			`"buyerBank_sign " : "` + buyerBank_sign   + `", `+
-			`"bb_name " : "` + bb_name   + `", `+
-			`"sb_name " : "` + sb_name   + `"`+
+			`"paymentDeadlineDate" : "` + paymentDeadlineDate   + `", `+
+			`"buyerBank_sign" : "` + buyerBank_sign   + `", `+
+			`"bb_name" : "` + bb_name   + `", `+
+			`"sb_name" : "` + sb_name   + `"`+
 			`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
