@@ -375,10 +375,11 @@ func (t *ManageAgreement) getAgreement_byShipper(stub shim.ChaincodeStubInterfac
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-		}
-		if i < len(agreementIndex)-1 {
+			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
+		    }
 		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
@@ -433,10 +434,11 @@ func (t *ManageAgreement) getAgreement_byBuyerBank(stub shim.ChaincodeStubInterf
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-		}
-		if i < len(agreementIndex)-1 {
+			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
+			}
 		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
@@ -491,10 +493,11 @@ func (t *ManageAgreement) getAgreement_bySellerBank(stub shim.ChaincodeStubInter
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-		}
-		if i < len(agreementIndex)-1 {
+			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
+			}
 		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
@@ -549,10 +552,11 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-		}
-		if i < len(agreementIndex)-1 {
+			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
+			}
 		}
+		
 	}
 	
 	jsonResp = jsonResp + "}"
