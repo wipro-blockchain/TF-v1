@@ -262,7 +262,7 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 	}
 	
 	jsonResp = jsonResp + "}"
-	//fmt.Println("jsonResp : " + jsonResp)
+	fmt.Println("jsonResp : " + jsonResp)
 	//fmt.Print("jsonResp in bytes : ")
 	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_bySeller")
