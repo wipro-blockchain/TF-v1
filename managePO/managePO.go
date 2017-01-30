@@ -54,7 +54,7 @@ type PO struct{							// Attributes of a PO
 func main() {			
 	err := shim.Start(new(ManagePO))
 	if err != nil {
-		fmt.Printf("Error starting PO management chaincode: %s", err)
+		fmt.Printf("Error starting PO management chaincodes: %s", err)
 	}
 }
 // ============================================================================================================================
