@@ -20,14 +20,14 @@ under the License.
 package main
 
 import (
-	"errors"
-	"fmt"
-	"strconv"
-	"encoding/json"
+"errors"
+"fmt"
+"strconv"
+"encoding/json"
 	//"time"
 	//"strings"
 
-	"github.com/hyperledger/fabric/core/chaincode/shim"
+"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // ManagePayment example simple Chaincode implementation
@@ -71,7 +71,7 @@ func (t *ManagePayment) Init(stub shim.ChaincodeStubInterface, function string, 
 	var err error
 
 	if len(args) != 1 {
-			errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Initial_Value\" as an argument.\", \"code\" : \"503\"}"
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Initial_Value\" as an argument.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -95,7 +95,7 @@ func (t *ManagePayment) Init(stub shim.ChaincodeStubInterface, function string, 
 	if err != nil {
 		return nil, err
 	}
-tosend := "{ \"message\" : \"ManagePayment chaincode is deployed successfully.\", \"code\" : \"200\"}"
+	tosend := "{ \"message\" : \"ManagePayment chaincode is deployed successfully.\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
 		return nil, err
@@ -494,20 +494,20 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 	
 	//build the Payment json string manually
 	order := `{`+
-			`"paymentId" : "` + res.PaymentID   + `", `+
-			`"agreementId" : "` + res.AgreementID   + `", `+
-			`"buyerName" : "` + res.BuyerName   + `", `+
-			`"sellerName" : "` + res.SellerName   + `", `+
-			`"buyerAccount" : "` + res.BuyerAccount   + `", `+
-			`"sellerAccount" : "` + res.SellerAccount   + `", `+
-			`"amountTransferred" : "` + res.AmountTransferred   + `", `+
-			`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
-			`"paymentStatus" : "` + res.PaymentStatus   + `", `+
-			`"paymentDeadlineDate" : "` + res.PaymentDeadlineDate   + `", `+
-			`"buyerBank_sign" : "` + res.BuyerBank_sign   + `", `+
-	                `"bb_name" : "` + res.BB_name   + `", `+
-			`"sb_name" : "` + res.SB_name   + `"`+
-			`}`
+		`"paymentId" : "` + res.PaymentID   + `", `+
+		`"agreementId" : "` + res.AgreementID   + `", `+
+		`"buyerName" : "` + res.BuyerName   + `", `+
+		`"sellerName" : "` + res.SellerName   + `", `+
+		`"buyerAccount" : "` + res.BuyerAccount   + `", `+
+		`"sellerAccount" : "` + res.SellerAccount   + `", `+
+		`"amountTransferred" : "` + res.AmountTransferred   + `", `+
+		`"paymentCUDate" : "` + res.PaymentCUDate   + `", `+
+		`"paymentStatus" : "` + res.PaymentStatus   + `", `+
+		`"paymentDeadlineDate" : "` + res.PaymentDeadlineDate   + `", `+
+		`"buyerBank_sign" : "` + res.BuyerBank_sign   + `", `+
+		`"bb_name" : "` + res.BB_name   + `", `+
+		`"sb_name" : "` + res.SB_name   + `"`+
+		`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
 	if err != nil {
@@ -595,36 +595,36 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	if res.PaymentID == paymentId{
 		fmt.Println("This Payment arleady exists: " + paymentId)
 		errMsg := "{ \"message\" : \"This Payment arleady exists.\", \"code\" : \"503\"}"
-			err := stub.SetEvent("errEvent", []byte(errMsg))
-			if err != nil {
-				return nil, err
-			} 
+		err := stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
 		return nil, nil				//all stop a payment by this name exists
 	}
 	
 	//build the Payment json string manually
 	
 	order := `{`+
-			`"paymentId" : "` + paymentId   + `", `+
-			`"agreementId" : "` + agreementId   + `", `+
-			`"buyerName" : "` + buyerName   + `", `+
-			`"sellerName" : "` + sellerName   + `", `+
-			`"buyerAccount" : "` + buyerAccount   + `", `+
-			`"sellerAccount" : "` + sellerAccount   + `", `+
-			`"amountTransferred" : "` + amountTransferred   + `", `+
-			`"paymentCUDate" : "` + paymentCUDate   + `", `+
-			`"paymentStatus" : "` + paymentStatus   + `", `+
-			`"paymentDeadlineDate" : "` + paymentDeadlineDate   + `", `+
-			`"buyerBank_sign" : "` + buyerBank_sign   + `", `+
-			`"bb_name" : "` + bb_name   + `", `+
-			`"sb_name" : "` + sb_name   + `"`+
-			`}`
+		`"paymentId" : "` + paymentId   + `", `+
+		`"agreementId" : "` + agreementId   + `", `+
+		`"buyerName" : "` + buyerName   + `", `+
+		`"sellerName" : "` + sellerName   + `", `+
+		`"buyerAccount" : "` + buyerAccount   + `", `+
+		`"sellerAccount" : "` + sellerAccount   + `", `+
+		`"amountTransferred" : "` + amountTransferred   + `", `+
+		`"paymentCUDate" : "` + paymentCUDate   + `", `+
+		`"paymentStatus" : "` + paymentStatus   + `", `+
+		`"paymentDeadlineDate" : "` + paymentDeadlineDate   + `", `+
+		`"buyerBank_sign" : "` + buyerBank_sign   + `", `+
+		`"bb_name" : "` + bb_name   + `", `+
+		`"sb_name" : "` + sb_name   + `"`+
+		`}`
 
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
 	if err != nil {
 		return nil, err
 	}
-		
+	
 	//get the Payment index
 	paymentIndexAsBytes, err := stub.GetState(PaymentIndexStr)
 	if err != nil {
