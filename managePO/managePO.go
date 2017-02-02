@@ -424,7 +424,12 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	if len(args) != 12 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 12")
+	    errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 12\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	fmt.Println("start create_po")
 	/*if len(args[0]) <= 0 {
@@ -480,7 +485,12 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if res.TransID == transId{
 		//fmt.Println("This PO arleady exists: " + transId)
 		//fmt.Println(res);
-		return nil, errors.New("This PO arleady exists")				//all stop a PO by this name exists
+	    errMsg := "{ \"message\" : \"This PO arleady exists\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil				//all stop a PO by this name exists
 	}
 	
 	//build the PO json string manually
