@@ -64,7 +64,12 @@ func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args 
 	var msg string
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+	    errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting ' ' as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// Initialize the chaincode
 	msg = args[0]
@@ -148,7 +153,7 @@ func (t *ManagePO) getPO_byID(stub shim.ChaincodeStubInterface, args []string) (
 	var err error
 	fmt.Println("start getPO_byID")
 	if len(args) != 1 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 'PO ID' as an argument\", \"code\" : \"503\"}"
+	    errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 'PO ID' as an argument\", \"code\" : \"503\"}"
 	    err = stub.SetEvent("errEvent", []byte(errMsg))
 	    if err != nil {
 	    	return nil, err
