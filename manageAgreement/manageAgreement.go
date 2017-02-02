@@ -73,7 +73,12 @@ func (t *ManageAgreement) Init(stub shim.ChaincodeStubInterface, function string
 	var msg string
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Intial_Value\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// Initialize the chaincode
 	msg = args[0]
@@ -91,7 +96,11 @@ func (t *ManageAgreement) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, err
 	}
-	
+	tosend := "{ \"message\" : \"ManageAgreement chaincode is deployed successfully.\", \"code\" : \"200\"}"
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 	return nil, nil
 }
 // ============================================================================================================================
@@ -118,7 +127,12 @@ func (t *ManageAgreement) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.update_agreement(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)					//error
-	return nil, errors.New("Received unknown function invocation")
+	errMsg := "{ \"message\" : \"Received unknown function invocation\", \"code\" : \"503\"}"
+    err := stub.SetEvent("errEvent", []byte(errMsg))
+    if err != nil {
+    	return nil, err
+    } 
+	return nil, nil	
 }
 // ============================================================================================================================
 // Query - Our entry agreementint for Queries
@@ -146,24 +160,38 @@ func (t *ManageAgreement) Query(stub shim.ChaincodeStubInterface, function strin
 	} 
 
 	fmt.Println("query did not find func: " + function)						//error
-	return nil, errors.New("Received unknown function query")
+	errMsg := "{ \"message\" : \"Received unknown function query\", \"code\" : \"503\"}"
+    err := stub.SetEvent("errEvent", []byte(errMsg))
+    if err != nil {
+    	return nil, err
+    } 
+	return nil, nil
 }
 // ============================================================================================================================
 // getAgreement_byID - get Agreement details for a specific AgreementID from chaincode state
 // ============================================================================================================================
 func (t *ManageAgreement) getAgreement_byID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var agreementId, jsonResp string
+	var agreementId string
 	var err error
 	fmt.Println("start getAgreement_byID")
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"AgreementID\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set agreementId
 	agreementId = args[0]
 	valAsbytes, err := stub.GetState(agreementId)									//get the agreementId from chaincode state
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + agreementId + "\"}"
-		return nil, errors.New(jsonResp)
+		errMsg := "{ \"message\" : \""+ agreementId + " not Found.\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	fmt.Print("valAsbytes : ")
 	fmt.Println(valAsbytes)
@@ -180,7 +208,12 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 	fmt.Println("start getAgreement_byBuyer")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Buyer_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set buyer's name
 	buyer_name = args[0]
@@ -217,6 +250,13 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 			if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
 			}
+		} else{
+			errMsg := "{ \"message\" : \""+ buyer_name+ " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 	}
 	jsonResp = jsonResp + "}"
@@ -237,7 +277,12 @@ func (t *ManageAgreement) getAgreement_bySeller(stub shim.ChaincodeStubInterface
 	fmt.Println("start getAgreement_bySeller")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Seller_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set seller name
 	seller_name = args[0]
@@ -274,6 +319,13 @@ func (t *ManageAgreement) getAgreement_bySeller(stub shim.ChaincodeStubInterface
 			if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
 			}
+		}else{
+			errMsg := "{ \"message\" : \""+ seller_name+ " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 		
 	}
@@ -294,7 +346,12 @@ func (t *ManageAgreement) get_AllAgreement(stub shim.ChaincodeStubInterface, arg
 	fmt.Println("start get_AllAgreement")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \" \" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	agreementAsBytes, err := stub.GetState(AgreementIndexStr)
 	if err != nil {
@@ -341,7 +398,12 @@ func (t *ManageAgreement) getAgreement_byShipper(stub shim.ChaincodeStubInterfac
 	fmt.Println("start getAgreement_byShipper")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Shipper_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set Shipper name
 	shipper_name = args[0]
@@ -378,6 +440,13 @@ func (t *ManageAgreement) getAgreement_byShipper(stub shim.ChaincodeStubInterfac
 			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
 		    }
+		}else{
+			errMsg := "{ \"message\" : \""+ shipper_name+ " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 		
 	}
@@ -400,7 +469,12 @@ func (t *ManageAgreement) getAgreement_byBuyerBank(stub shim.ChaincodeStubInterf
 	fmt.Println("start getAgreement_byBuyerBank")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Buyer_Bank_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set Buyer Bank
 	bb_name = args[0]
@@ -437,6 +511,13 @@ func (t *ManageAgreement) getAgreement_byBuyerBank(stub shim.ChaincodeStubInterf
 			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
 			}
+		}else{
+			errMsg := "{ \"message\" : \""+ bb_name + " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 		
 	}
@@ -459,7 +540,12 @@ func (t *ManageAgreement) getAgreement_bySellerBank(stub shim.ChaincodeStubInter
 	fmt.Println("start getAgreement_bySellerBank")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Seller_Bank_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set seller bank 
 	sb_name = args[0]
@@ -496,6 +582,13 @@ func (t *ManageAgreement) getAgreement_bySellerBank(stub shim.ChaincodeStubInter
 			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
 			}
+		}else{
+			errMsg := "{ \"message\" : \""+ sb_name + " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 		
 	}
@@ -518,7 +611,12 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 	fmt.Println("start getAgreement_byPortAuthority")
 	var err error
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1 argument")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"Port_Authority_Name\" as an argument\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set Port authority name
 	agreementPortAuth_name = args[0]
@@ -555,6 +653,13 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 			if i < len(agreementIndex)-1 {
 			jsonResp = jsonResp + ","
 			}
+		} else{
+			errMsg := "{ \"message\" : \""+ agreementPortAuth_name + " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 		
 	}
@@ -571,13 +676,23 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 // ============================================================================================================================
 func (t *ManageAgreement) delete_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"agreementID\" as an argument.\", \"code\" : \"503\"}"
+	    err := stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set agreementId
 	agreementId := args[0]
 	err := stub.DelState(agreementId)													//remove the Agreement from chaincode
 	if err != nil {
-		return nil, errors.New("Failed to delete state")
+		errMsg := "{ \"message\" : \"Failed to delete state\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 
 	//get the Agreement index
@@ -605,6 +720,11 @@ func (t *ManageAgreement) delete_agreement(stub shim.ChaincodeStubInterface, arg
 	}
 	jsonAsBytes, _ := json.Marshal(agreementIndex)									//save new index
 	err = stub.PutState(AgreementIndexStr, jsonAsBytes)
+	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"Agreement deleted succcessfully\", \"code\" : \"200\"}"
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 	return nil, nil
 }
 // ============================================================================================================================
@@ -615,7 +735,12 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	var err error
 	fmt.Println("start update_agreement")
 	if len(args) != 21{
-		return nil, errors.New("Incorrect number of arguments. Expecting 21.")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 21 arguments.\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	// set agreementId
 	agreementId := args[0]
@@ -653,6 +778,13 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.Seller_sign = args[19]
 		res.SellerBank_sign = args[20]
 		
+		}else{
+			errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 		}
 	
 	//build the Agreement json string manually
@@ -683,6 +815,11 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
+	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"Agreement updated succcessfully\", \"code\" : \"200\"}"
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 	fmt.Println("end update_agreement")
 	return nil, nil
 }
@@ -692,7 +829,12 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	if len(args) != 21 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 21")
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 21 arguments.\", \"code\" : \"503\"}"
+	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil
 	}
 	fmt.Println("start create_agreement")
 	/*if len(args[0]) <= 0 {
@@ -782,8 +924,12 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	fmt.Println(res)
 	if res.AgreementID == agreementId{
 		fmt.Println("This Agreement arleady exists: " + agreementId)
-		fmt.Println(res);
-		return nil, errors.New("This Agreement arleady exists")				//all stop a Agreement by this name exists
+		errMsg := "{ \"message\" : \"This Agreement arleady exists.\", \"code\" : \"503\"}"
+	    err := stub.SetEvent("errEvent", []byte(errMsg))
+	    if err != nil {
+	    	return nil, err
+	    } 
+		return nil, nil				//all stop a Agreement by this name exists
 	}
 	
 	//build the Agreement json string manually
@@ -839,6 +985,11 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
+	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"Agreement created succcessfully\", \"code\" : \"200\"}"
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 
 	fmt.Println("end create_agreement")
 	return nil, nil
