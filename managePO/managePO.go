@@ -85,10 +85,10 @@ func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args 
 		return nil, err
 	}
 	tosend := "{ \"message\" : \"ManagePO chaincode is deployed successfully.\", \"code\" : \"200\"}"
-    	err = stub.SetEvent("evtsender", []byte(tosend))
-    	if err != nil {
-    		return nil, err
-    	} 
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 	return nil, nil
 }
 // ============================================================================================================================
@@ -474,6 +474,13 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.Price = args[9]
 		res.Buyer_sign = args[10]
 		res.Seller_sign = args[11]
+	}else{
+		errMsg := "{ \"message\" : \""+ transId+ " Not Found.\", \"code\" : \"503\"}"
+		    err = stub.SetEvent("errEvent", []byte(errMsg))
+		    if err != nil {
+		    	return nil, err
+		    } 
+			return nil, nil
 	}
 	
 	//build the PO json string manually
@@ -573,7 +580,7 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		//fmt.Println("This PO arleady exists: " + transId)
 		//fmt.Println(res);
 	    errMsg := "{ \"message\" : \"This PO arleady exists\", \"code\" : \"503\"}"
-	    err = stub.SetEvent("errEvent", []byte(errMsg))
+	    err := stub.SetEvent("errEvent", []byte(errMsg))
 	    if err != nil {
 	    	return nil, err
 	    } 
