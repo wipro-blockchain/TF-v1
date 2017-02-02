@@ -389,7 +389,7 @@ func (t *ManagePayment) getAllPayment(stub shim.ChaincodeStubInterface, args []s
 func (t *ManagePayment) deletePayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting \"paymentID\" arguments.\", \"code\" : \"503\"}"
-		err = stub.SetEvent("errEvent", []byte(errMsg))
+		err := stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
 		} 
