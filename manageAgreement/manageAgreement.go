@@ -176,6 +176,8 @@ func (t *ManageAgreement) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.get_fraud_list(stub, args)
 	}else if function == "getApprovalStatus" {													//Read a Agreement by Port Authority
 		return t.getApprovalStatus(stub, args)
+	}else if function == "get_fraud_details" {													//Read a Agreement by Port Authority
+		return t.get_fraud_details(stub, args)
 	}
 
 	fmt.Println("query did not find func: " + function)						//error
@@ -290,9 +292,8 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 //  getApprovalStatus - get approval details of an Agreement for a specific user from chaincode state
 // ============================================================================================================================
 func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp, user, errResp string
-	var agreementIndex []string
-	var valIndex Agreement
+	var jsonResp, user string
+	var agreementIndex Agreement
 	fmt.Println("Fetching Agreements")
 	var err error
 	if len(args) != 2 {
@@ -308,17 +309,23 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 	agreementId := args[1]
 	agreementAsBytes, err := stub.GetState(agreementId)
 	if err != nil {
-		return nil, errors.New("Failed to get Agreement ID")
+		errMsg := "{ \"message\" : \""+ agreementId + " not Found.\", \"code\" : \"503\"}"
+		err = stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
+		return nil, nil
 	}
+
 	fmt.Print("agreementAsBytes : ")
 	fmt.Println(agreementAsBytes)
 	json.Unmarshal(agreementAsBytes, &agreementIndex)								//un stringify it aka JSON.parse()
-	fmt.Print("agreementIndex : ")
+	/*fmt.Print("agreementIndex : ")
 	fmt.Println(agreementIndex)
 	fmt.Println("len(agreementIndex) : ")
-	fmt.Println(len(agreementIndex))
+	fmt.Println(len(agreementIndex))*/
 	jsonResp = "{"
-	for i,val := range agreementIndex{
+	/*for i,val := range agreementIndex{
 		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getting User")
 		valueAsBytes, err := stub.GetState(val)
 		if err != nil {
@@ -329,47 +336,55 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 		fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
 		fmt.Print("valIndex: ")
-		fmt.Print(valIndex)
-		if valIndex.SellerName == user{
+		fmt.Print(valIndex)*/
+		if agreementIndex.SellerName == user{
 			fmt.Println("Seller found")
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("status: ")
-			fmt.Print(string(valIndex.Agreement_status));
+			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
+			fmt.Println("agreement_status: ")
+			fmt.Print(string(agreementIndex.Agreement_status));
+			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
+			fmt.Println("result: "+ result)
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-			if i < len(agreementIndex)-1 {
+			/*if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
-			}
-		}else if valIndex.BuyerName == user{
+			}*/
+		}else if agreementIndex.BuyerName == user{
 			fmt.Println("Buyer found")
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("status: ")
-			fmt.Print(string(valIndex.Agreement_status));
+			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
+			fmt.Println("agreement_status: ")
+			fmt.Print(string(agreementIndex.Agreement_status));
+			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
+			fmt.Println("result: "+ result)
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-			if i < len(agreementIndex)-1 {
+			/*if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
-			}
-		}else if valIndex.BB_name == user{
+			}*/
+		}else if agreementIndex.BB_name == user{
 			fmt.Println("Buyer Bank found")
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("status: ")
-			fmt.Print(string(valIndex.Agreement_status));
+			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
+			fmt.Println("agreement_status: ")
+			fmt.Print(string(agreementIndex.Agreement_status));
+			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
+			fmt.Println("result: "+ result)
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-			if i < len(agreementIndex)-1 {
+			/*if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
-			}
-		}else if valIndex.SB_name == user{
+			}*/
+		}else if agreementIndex.SB_name == user{
 			fmt.Println("Seller Bank found")
-			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
-			fmt.Println("status: ")
-			fmt.Print(string(valIndex.Agreement_status));
+			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
+			fmt.Println("agreement_status: ")
+			fmt.Print(string(agreementIndex.Agreement_status));
+			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
+			fmt.Println("result: "+ result)
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
-			if i < len(agreementIndex)-1 {
+			/*if i < len(agreementIndex)-1 {
 				jsonResp = jsonResp + ","
-			}
+			}*/
 		}else{
 			errMsg := "{ \"message\" : \""+ user+ " Not Found.\", \"code\" : \"503\"}"
 			err = stub.SetEvent("errEvent", []byte(errMsg))
@@ -379,7 +394,7 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 			return nil, nil
 		}
 		
-	}
+	//}
 	
 	jsonResp = jsonResp + "}"
 	fmt.Println("jsonResp : " + jsonResp)
@@ -827,7 +842,7 @@ func (t *ManageAgreement) get_fraud_details(stub shim.ChaincodeStubInterface, ar
 	fmt.Println(len(fraudListIndex))
 	jsonResp = "{"
 	for i,val := range fraudListIndex{
-		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for get_fraud_list()")
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for get_fraud_details()")
 		valueAsBytes, err := stub.GetState(val)
 		if err != nil {
 			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
