@@ -174,7 +174,9 @@ func (t *ManageAgreement) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.getAgreement_byPortAuthority(stub, args)
 	}else if function == "get_fraud_list" {													//Read a Agreement by Port Authority
 		return t.get_fraud_list(stub, args)
-	}  
+	}else if function == "getApprovalStatus" {													//Read a Agreement by Port Authority
+		return t.getApprovalStatus(stub, args)
+	}
 
 	fmt.Println("query did not find func: " + function)						//error
 	errMsg := "{ \"message\" : \"Received unknown function query\", \"code\" : \"503\"}"
