@@ -332,7 +332,7 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 			fmt.Println("Seller found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("status: ")
-			fmt.Print(string(valIndex.agreement_status));
+			fmt.Print(string(valIndex.Agreement_status));
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
 			if i < len(agreementIndex)-1 {
@@ -342,7 +342,7 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 			fmt.Println("Buyer found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("status: ")
-			fmt.Print(string(valIndex.agreement_status));
+			fmt.Print(string(valIndex.Agreement_status));
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
 			if i < len(agreementIndex)-1 {
@@ -352,7 +352,7 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 			fmt.Println("Buyer Bank found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("status: ")
-			fmt.Print(string(valIndex.agreement_status));
+			fmt.Print(string(valIndex.Agreement_status));
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
 			if i < len(agreementIndex)-1 {
@@ -362,7 +362,7 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 			fmt.Println("Seller Bank found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
 			fmt.Println("status: ")
-			fmt.Print(string(valIndex.agreement_status));
+			fmt.Print(string(valIndex.Agreement_status));
 			fmt.Println("jsonResp inside if")
 			fmt.Println(jsonResp)
 			if i < len(agreementIndex)-1 {
