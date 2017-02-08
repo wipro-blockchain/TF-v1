@@ -57,6 +57,7 @@ type Agreement struct{							// Attributes of a Agreement
 	BuyerBank_sign string `json:"buyerBank_sign"`
 	Seller_sign string `json:"seller_sign"`
 	SellerBank_sign string `json:"sellerBank_sign "`
+	Industry string `json:"industry "`
 }
 type Fraud_list struct{
 	FraudID string `json:"fraudId"`	
@@ -134,12 +135,14 @@ func (t *ManageAgreement) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "create_agreement" {											//create a new Agreement
 		return t.create_agreement(stub, args)
-	}else if function == "delete_agreement" {									// delete a Agreement
+	}else if function == "delete_agreement" {									// delete an Agreement
 		return t.delete_agreement(stub, args)
-	}else if function == "update_agreement" {									//update a Agreement
+	}else if function == "update_agreement" {									//update an Agreement
 		return t.update_agreement(stub, args)
-	}else if function == "update_fraud_list" {									//update a Agreement
+	}else if function == "update_fraud_list" {									//update an Agreement
 		return t.update_fraud_list(stub, args)
+	}else if function == "approve_agreement" {									//approve an Agreement
+		return t.approve_agreement(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)					//error
 	errMsg := "{ \"message\" : \"Received unknown function invocation\", \"code\" : \"503\"}"
@@ -177,7 +180,7 @@ func (t *ManageAgreement) Query(stub shim.ChaincodeStubInterface, function strin
 	}else if function == "getApprovalStatus" {													//Read a Agreement by Port Authority
 		return t.getApprovalStatus(stub, args)
 	}else if function == "get_fraud_details" {													//Read a Agreement by Port Authority
-		return t.get_fraud_details(stub, args)
+		return t.get_fraud_details(stub, args[0])
 	}
 
 	fmt.Println("query did not find func: " + function)						//error
@@ -292,7 +295,7 @@ func (t *ManageAgreement) getAgreement_byBuyer(stub shim.ChaincodeStubInterface,
 //  getApprovalStatus - get approval details of an Agreement for a specific user from chaincode state
 // ============================================================================================================================
 func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp, user string
+	var user , result string
 	var agreementIndex Agreement
 	fmt.Println("Fetching Agreements")
 	var err error
@@ -316,92 +319,42 @@ func (t *ManageAgreement) getApprovalStatus(stub shim.ChaincodeStubInterface, ar
 		} 
 		return nil, nil
 	}
-
 	fmt.Print("agreementAsBytes : ")
 	fmt.Println(agreementAsBytes)
 	json.Unmarshal(agreementAsBytes, &agreementIndex)								//un stringify it aka JSON.parse()
-	/*fmt.Print("agreementIndex : ")
-	fmt.Println(agreementIndex)
-	fmt.Println("len(agreementIndex) : ")
-	fmt.Println(len(agreementIndex))*/
-	jsonResp = "{"
-	/*for i,val := range agreementIndex{
-		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getting User")
-		valueAsBytes, err := stub.GetState(val)
+	if agreementIndex.SellerName == user{
+		fmt.Println("Seller found")
+		result = "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "Seller_sign" + "\":\"" + string(agreementIndex.Seller_sign) + "\"}"
+		fmt.Println("result: "+ result)
+		if string(agreementIndex.Seller_sign) == "false"{
+			// call update agreement and set seller_sign "true"
+		}
+	}else if agreementIndex.BuyerName == user{
+		fmt.Println("Buyer found")
+		fmt.Print(string(agreementIndex.Agreement_status));
+		result = "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "Buyer_sign" + "\":\"" + string(agreementIndex.Buyer_sign) + "\"}"
+		fmt.Println("result: "+ result)
+	}else if agreementIndex.BB_name == user{
+		fmt.Println("Buyer Bank found")
+		result = "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "BuyerBank_sign" + "\":\"" + string(agreementIndex.BuyerBank_sign) + "\"}"
+		fmt.Println("result: "+ result)
+		if string(agreementIndex.Seller_sign) == "true"{
+			// check for conditions and call update agreement and set buyer bank sign "true"
+		}
+	}else if agreementIndex.SB_name == user{
+		fmt.Println("Seller Bank found")
+		result = "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "SellerBank_sign" + "\":\"" + string(agreementIndex.SellerBank_sign) + "\"}"
+		fmt.Println("result: "+ result)
+	}else{
+		errMsg := "{ \"message\" : \""+ user+ " Not Found.\", \"code\" : \"503\"}"
+		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
-			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
-			return nil, errors.New(errResp)
-		}
-		fmt.Print("valueAsBytes : ")
-		fmt.Println(valueAsBytes)
-		json.Unmarshal(valueAsBytes, &valIndex)
-		fmt.Print("valIndex: ")
-		fmt.Print(valIndex)*/
-		if agreementIndex.SellerName == user{
-			fmt.Println("Seller found")
-			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
-			fmt.Println("agreement_status: ")
-			fmt.Print(string(agreementIndex.Agreement_status));
-			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
-			fmt.Println("result: "+ result)
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
-			/*if i < len(agreementIndex)-1 {
-				jsonResp = jsonResp + ","
-			}*/
-		}else if agreementIndex.BuyerName == user{
-			fmt.Println("Buyer found")
-			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
-			fmt.Println("agreement_status: ")
-			fmt.Print(string(agreementIndex.Agreement_status));
-			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
-			fmt.Println("result: "+ result)
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
-			/*if i < len(agreementIndex)-1 {
-				jsonResp = jsonResp + ","
-			}*/
-		}else if agreementIndex.BB_name == user{
-			fmt.Println("Buyer Bank found")
-			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
-			fmt.Println("agreement_status: ")
-			fmt.Print(string(agreementIndex.Agreement_status));
-			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
-			fmt.Println("result: "+ result)
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
-			/*if i < len(agreementIndex)-1 {
-				jsonResp = jsonResp + ","
-			}*/
-		}else if agreementIndex.SB_name == user{
-			fmt.Println("Seller Bank found")
-			jsonResp = jsonResp + "\""+ agreementId + "\":" + string(agreementAsBytes[:])
-			fmt.Println("agreement_status: ")
-			fmt.Print(string(agreementIndex.Agreement_status));
-			result:= "{" + "\""+ "agreementId" + "\": \"" + agreementId + "\", \""+ "agreement_status" + "\":\"" + string(agreementIndex.Agreement_status) + "\"}"
-			fmt.Println("result: "+ result)
-			fmt.Println("jsonResp inside if")
-			fmt.Println(jsonResp)
-			/*if i < len(agreementIndex)-1 {
-				jsonResp = jsonResp + ","
-			}*/
-		}else{
-			errMsg := "{ \"message\" : \""+ user+ " Not Found.\", \"code\" : \"503\"}"
-			err = stub.SetEvent("errEvent", []byte(errMsg))
-			if err != nil {
-				return nil, err
-			} 
-			return nil, nil
-		}
-		
-	//}
-	
-	jsonResp = jsonResp + "}"
-	fmt.Println("jsonResp : " + jsonResp)
-	fmt.Print("jsonResp in bytes : ")
-	fmt.Println([]byte(jsonResp))
+			return nil, err
+		} 
+		return nil, nil
+	}
 	fmt.Println("Fetched Approval Status")
-	return []byte(jsonResp), nil											//send it onward
+	return []byte(result), nil											//send it onward
 }
 
 
@@ -812,7 +765,7 @@ func (t *ManageAgreement) getAgreement_byPortAuthority(stub shim.ChaincodeStubIn
 // ============================================================================================================================
 //  get_fraud_details - get Fraud details by fraud's name from chaincode state
 // ============================================================================================================================
-func (t *ManageAgreement) get_fraud_details(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *ManageAgreement) get_fraud_details(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	var jsonResp, fraud_name, errResp string
 	var fraudListIndex []string
 	var valIndex Fraud_list
@@ -827,7 +780,7 @@ func (t *ManageAgreement) get_fraud_details(stub shim.ChaincodeStubInterface, ar
 		return nil, nil
 	}
 	// set fraud's name
-	fraud_name = args[0]
+	fraud_name = args
 	fmt.Println("fraud_name : " + fraud_name)
 	fraudListAsBytes, err := stub.GetState(FraudListIndexStr)
 	if err != nil {
@@ -987,8 +940,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	var jsonResp string
 	var err error
 	fmt.Println("start update_agreement")
-	if len(args) != 21{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 21 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 22{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 22 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -1030,6 +983,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.BuyerBank_sign = args[18]
 		res.Seller_sign = args[19]
 		res.SellerBank_sign = args[20]
+		res.Industry = args[21]
 		
 	}else{
 		errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
@@ -1062,7 +1016,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + res.BuyerBank_sign + `" , `+ 
 		`"seller_sign": "` + res.Seller_sign + `" , `+ 
-		`"sellerBank_sign" : "` + res.SellerBank_sign + `" `+ 
+		`"sellerBank_sign" : "` + res.SellerBank_sign + `" , `+ 
+		`"industry" : "` + res.Industry + `" `+ 
 		`}`
 	err = stub.PutState(agreementId, []byte(order))									//store Agreement with id as key
 	if err != nil {
@@ -1081,8 +1036,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 // ============================================================================================================================
 func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 21 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 21 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 22 {
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 22 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -1163,11 +1118,46 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		buyerBank_sign := args[18]
 		seller_sign := args[19]
 		sellerBank_sign := args[20]
+		industry := args[21]
 		
-		
+		fmt.Println("Checking fraud list...");
+
+		buyer, err:= t.get_fraud_details(stub, buyer_name)
+		if buyer != nil{
+			errMsg := "{ \"Agreement ID\" : \""+agreementId+"\", \"message\" : \"Buyer name exists in Fraud list. So, Agreement auto-rejected by System. \", \"code\" : \"503\"}"
+			err = stub.SetEvent("errEvent", []byte(errMsg))
+			if err != nil {
+				return nil, err
+			} 
+			return nil, nil
+		} else if err != nil{
+			errMsg := "{ \"message\" : \"Error while checking for Buyer in Fraud list. \", \"code\" : \"503\"}"
+			err = stub.SetEvent("errEvent", []byte(errMsg))
+			if err != nil {
+				return nil, err
+			} 
+			return nil, nil
+		}
+		seller, err := t.get_fraud_details(stub, seller_name)
+		if seller != nil{
+			errMsg := "{ \"Agreement ID\" : \""+agreementId+"\", \"message\" : \"Seller name exists in Fraud list. So, Agreement auto-rejected by System. \", \"code\" : \"503\"}"
+			err = stub.SetEvent("errEvent", []byte(errMsg))
+			if err != nil {
+				return nil, err
+			} 
+			return nil, nil
+		}else if err != nil{
+			errMsg := "{ \"message\" : \"Error while checking for Seller in Fraud list. \", \"code\" : \"503\"}"
+			err = stub.SetEvent("errEvent", []byte(errMsg))
+			if err != nil {
+				return nil, err
+			} 
+			return nil, nil
+		}
+		fmt.Println("Checked fraud list successfully.");
 		agreementAsBytes, err := stub.GetState(agreementId)
 		if err != nil {
-			return nil, errors.New("Failed to get Agreement transID")
+			return nil, errors.New("Failed to get Agreement ID")
 		}
 		fmt.Print("agreementAsBytes: ")
 		fmt.Println(agreementAsBytes)
@@ -1207,7 +1197,8 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"buyer_sign": "` + buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + buyerBank_sign + `" , `+ 
 		`"seller_sign": "` + seller_sign + `" , `+ 
-		`"sellerBank_sign": "` + sellerBank_sign + `" `+ 
+		`"sellerBank_sign": "` + sellerBank_sign + `", `+ 
+		`"industry": "` + industry + `" `+
 		`}`
 		fmt.Println("order: " + order)
 		fmt.Print("order in bytes array: ")
@@ -1242,8 +1233,8 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
 		return nil, err
-	} 
-
+	}
+	
 	fmt.Println("end create_agreement")
 	return nil, nil
 }
@@ -1265,24 +1256,24 @@ func (t *ManageAgreement) update_fraud_list(stub shim.ChaincodeStubInterface, ar
 	
 	fraudId := args[0]
 	fraudName := args[1]
-		
+
 	fraudListAsBytes, err := stub.GetState(fraudId)
 	if err != nil {
 		return nil, errors.New("Failed to get fraudID")
 	}
 	fmt.Print("fraudListAsBytes: ")
-		fmt.Println(fraudListAsBytes)
-		res := Fraud_list{}
-		json.Unmarshal(fraudListAsBytes, &res)
-		fmt.Print("res: ")
-		fmt.Println(res)
-		if res.FraudID == fraudId{
-			fmt.Println("This Fraud Name already exists: " + fraudId)
-			errMsg := "{ \"message\" : \"This Fraud Name already exists.\", \"code\" : \"503\"}"
-			err := stub.SetEvent("errEvent", []byte(errMsg))
-			if err != nil {
-				return nil, err
-			} 
+	fmt.Println(fraudListAsBytes)
+	res := Fraud_list{}
+	json.Unmarshal(fraudListAsBytes, &res)
+	fmt.Print("res: ")
+	fmt.Println(res)
+	if res.FraudID == fraudId{
+		fmt.Println("This Fraud Name already exists: " + fraudId)
+		errMsg := "{ \"message\" : \"This Fraud Name already exists.\", \"code\" : \"503\"}"
+		err := stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
 		return nil, nil				//all stop a Fraud List by this name exists
 	}
 	
@@ -1325,5 +1316,94 @@ func (t *ManageAgreement) update_fraud_list(stub shim.ChaincodeStubInterface, ar
 	} 
 
 	fmt.Println("Fraud list updated successfully.")
+	return nil, nil
+}
+func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp , str string
+	var err error
+	fmt.Println("start approve_agreement")
+	if len(args) != 2{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 2 arguments.\", \"code\" : \"503\"}"
+		err = stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
+		return nil, nil
+	}
+	// set agreementId
+	agreementId := args[0]
+	user := args[1]
+	//sign := args[2]
+	agreementAsBytes, err := stub.GetState(agreementId)									//get the Agreement for the specified agreementId from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + agreementId + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	res := Agreement{}
+	json.Unmarshal(agreementAsBytes, &res)
+	if res.AgreementID == agreementId{
+		fmt.Println("Agreement found with agreementId : " + agreementId)
+		fmt.Println(res);
+		if res.SellerName == user {
+			res.Seller_sign = "true"
+			str = "Seller Signature"
+		} else if res.BB_name == user {
+			price,err := strconv.Atoi(res.Total_Value)
+			if err != nil {
+				return nil, errors.New("Error while converting string 'Total_Value' to int ")
+			}
+			if (price <= 10000 && res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+					res.BuyerBank_sign = "true";
+					str = "Buyer Bank Signature"
+			}
+		} else if res.SB_name == user {
+			if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+					res.SellerBank_sign = "true";
+					str = "Seller Bank  Signature"
+			}
+		}
+	}else{
+		errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
+		err = stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
+		return nil, nil
+	}
+	
+	//build the Agreement json string manually
+	order := 	`{`+
+		`"agreementId": "` + res.AgreementID + `" , `+
+		`"transId": "` + res.TransID + `" , `+ 
+		`"agreement_status": "` + res.Agreement_status + `" , `+ 
+		`"buyer_name": "` + res.BuyerName + `" , `+
+		`"seller_name": "` + res.SellerName + `" , `+
+		`"shipper_name": "` + res.ShipperName + `" , `+ 
+		`"bb_name": "` + res.BB_name + `" , `+ 
+		`"sb_name": "` + res.SB_name + `" , `+ 
+		`"agreementPortAuth_name": "` + res.PortAuthName + `" , `+ 
+		`"agreementCU_date": "` + res.AgreementCU_date + `" , `+ 
+		`"item_id": "` + res.ItemId + `" , `+ 
+		`"item_name": "` + res.Item_name + `" , `+ 
+		`"item_quantity": "` + res.Item_quantity + `" , `+ 
+		`"total_value": "` + res.Total_Value + `" , `+ 
+		`"document_name": "` + res.DocumentName + `" , `+ 
+		`"document_url": "` + res.DocumentURL + `" , `+ 
+		`"tc_text" : "` + res.TC_Text + `", `+ 
+		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
+		`"buyerBank_sign": "` + res.BuyerBank_sign + `" , `+ 
+		`"seller_sign": "` + res.Seller_sign + `" , `+ 
+		`"sellerBank_sign" : "` + res.SellerBank_sign + `" `+ 
+		`}`
+	err = stub.PutState(agreementId, []byte(order))									//store Agreement with id as key
+	if err != nil {
+		return nil, err
+	}
+	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"" + str + " updated succcessfully\", \"code\" : \"200\"}"
+	err = stub.SetEvent("evtsender", []byte(tosend))
+	if err != nil {
+		return nil, err
+	} 
+	fmt.Println("end update_agreement")
 	return nil, nil
 }
