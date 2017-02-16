@@ -572,15 +572,15 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	agreementId := args[1]
 	buyerName := args[2]
 	sellerName := args[3]
-	buyerAccount := args[4]
-	sellerAccount := args[5]
-	amountTransferred := args[6]
-	paymentCUDate := args[7]
-	paymentStatus := args[8]
-	paymentDeadlineDate := args[9]
-	buyerBank_sign := args[10]
-	bb_name := args[11]
-	sb_name := args[12]
+	buyerAccount := "965832147012"
+	sellerAccount := "741258963512"
+	amountTransferred := args[4]
+	paymentCUDate := args[5]
+	paymentStatus := args[6]
+	paymentDeadlineDate := args[7]
+	buyerBank_sign := args[8]
+	bb_name := args[9]
+	sb_name := args[10]
 
 	paymentAsBytes, err := stub.GetState(paymentId)
 	if err != nil {
