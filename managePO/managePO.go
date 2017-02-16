@@ -204,8 +204,8 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	//fmt.Print("poAsBytes : ")
 	//fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	//fmt.Print("poIndex : ")
-	//fmt.Println(poIndex)
+	fmt.Print("poIndex : ")
+	fmt.Println(poIndex)
 	//fmt.Println("len(poIndex) : ")
 	//fmt.Println(len(poIndex))
 	jsonResp = "{"
@@ -219,8 +219,8 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 		//fmt.Print("valueAsBytes : ")
 		//fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
-		//fmt.Print("valIndex: ")
-		//fmt.Print(valIndex)
+		fmt.Print("valIndex: ")
+		fmt.Print(valIndex)
 		if valIndex.BuyerName == buyerName{
 			fmt.Println("Buyer found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
@@ -274,8 +274,8 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 	//fmt.Print("poAsBytes : ")
 	//fmt.Println(poAsBytes)
 	json.Unmarshal(poAsBytes, &poIndex)								//un stringify it aka JSON.parse()
-	//fmt.Print("poIndex : ")
-	//fmt.Println(poIndex)
+	fmt.Print("poIndex : ")
+	fmt.Println(poIndex)
 	//fmt.Println("len(poIndex) : ")
 	//fmt.Println(len(poIndex))
 	jsonResp = "{"
@@ -289,8 +289,8 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 		//fmt.Print("valueAsBytes : ")
 		//fmt.Println(valueAsBytes)
 		json.Unmarshal(valueAsBytes, &valIndex)
-		//fmt.Print("valIndex: ")
-		//fmt.Print(valIndex)
+		fmt.Print("valIndex: ")
+		fmt.Print(valIndex)
 		if valIndex.SellerName == sellerName{
 			fmt.Println("Seller found")
 			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
