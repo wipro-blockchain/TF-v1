@@ -50,6 +50,9 @@ type Agreement struct{							// Attributes of a Agreement
 	Item_name string `json:"item_name"`
 	Item_quantity string `json:"item_quantity"`
 	Total_Value string `json:"total_value"`
+	Delivery_date string `json:"delivery_date"`
+	Late_fees string `json:"late_fees"`
+	Shipper_fees string `json:"shipper_fees"`
 	DocumentName string `json:"document_name"`
 	DocumentURL string `json:"document_url"`
 	TC_Text string `json:"tc_text "`
@@ -940,8 +943,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	var jsonResp string
 	var err error
 	fmt.Println("start update_agreement")
-	if len(args) != 22{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 22 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 25{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 25 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -976,14 +979,17 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.Item_name = args[11]
 		res.Item_quantity = args[12]
 		res.Total_Value = args[13]
-		res.DocumentName = args[14]
-		res.DocumentURL = args[15]
-		res.TC_Text = args[16]
-		res.Buyer_sign = args[17]
-		res.BuyerBank_sign = args[18]
-		res.Seller_sign = args[19]
-		res.SellerBank_sign = args[20]
-		res.Industry = args[21]
+		res.Delivery_date = args[14]
+		res.Late_fees = args[15]
+		res.Shipper_fees = args[16]
+		res.DocumentName = args[17]
+		res.DocumentURL = args[18]
+		res.TC_Text = args[19]
+		res.Buyer_sign = args[20]
+		res.BuyerBank_sign = args[21]
+		res.Seller_sign = args[22]
+		res.SellerBank_sign = args[23]
+		res.Industry = args[24]
 		
 	}else{
 		errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
@@ -995,7 +1001,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	}
 	
 	//build the Agreement json string manually
-	order := 	`{`+
+	input := 	`{`+
 		`"agreementId": "` + res.AgreementID + `" , `+
 		`"transId": "` + res.TransID + `" , `+ 
 		`"agreement_status": "` + res.Agreement_status + `" , `+ 
@@ -1010,6 +1016,9 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"item_name": "` + res.Item_name + `" , `+ 
 		`"item_quantity": "` + res.Item_quantity + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
+		`"delivery_date": "` + res.Delivery_date + `" , `+ 
+		`"late_fees": "` + res.Late_fees + `" , `+ 
+		`"shipper_fees" : "` + res.Shipper_fees + `", `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
 		`"tc_text" : "` + res.TC_Text + `", `+ 
@@ -1019,7 +1028,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sellerBank_sign" : "` + res.SellerBank_sign + `" , `+ 
 		`"industry" : "` + res.Industry + `" `+ 
 		`}`
-	err = stub.PutState(agreementId, []byte(order))									//store Agreement with id as key
+	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
 		return nil, err
 	}
@@ -1036,8 +1045,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 // ============================================================================================================================
 func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 22 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 22 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 25 {
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 25 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -1111,14 +1120,17 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		item_name := args[11]
 		item_quantity:= args[12]
 		total_value := args[13]
-		document_name := args[14]
-		document_url := args[15]
-		tc_text := args[16]
-		buyer_sign := args[17]
-		buyerBank_sign := args[18]
-		seller_sign := args[19]
-		sellerBank_sign := args[20]
-		industry := args[21]
+		delivery_date := args[14]
+		late_fees := args[15]
+		shipper_fees := args[16]
+		document_name := args[17]
+		document_url := args[18]
+		tc_text := args[19]
+		buyer_sign := args[20]
+		buyerBank_sign := args[21]
+		seller_sign := args[22]
+		sellerBank_sign := args[23]
+		industry := args[24]
 		
 		fmt.Println("Checking fraud list...");
 
@@ -1166,8 +1178,8 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		fmt.Print("res: ")
 		fmt.Println(res)
 		if res.AgreementID == agreementId{
-			fmt.Println("This Agreement arleady exists: " + agreementId)
-			errMsg := "{ \"message\" : \"This Agreement arleady exists.\", \"code\" : \"503\"}"
+			fmt.Println("This Agreement already exists: " + agreementId)
+			errMsg := "{ \"message\" : \"This Agreement already exists.\", \"code\" : \"503\"}"
 			err := stub.SetEvent("errEvent", []byte(errMsg))
 			if err != nil {
 				return nil, err
@@ -1176,7 +1188,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	}
 	
 	//build the Agreement json string manually
-	order := 	`{`+
+	input := 	`{`+
 		`"agreementId": "` + agreementId + `" , `+
 		`"transId": "` + transId + `" , `+ 
 		`"agreement_status": "` + agreement_status + `" , `+ 
@@ -1191,6 +1203,9 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"item_name": "` + item_name + `" , `+ 
 		`"item_quantity": "` + item_quantity + `" , `+ 
 		`"total_value": "` + total_value + `" , `+ 
+		`"delivery_date": "` + delivery_date + `" , `+ 
+		`"late_fees": "` + late_fees + `" , `+ 
+		`"shipper_fees": "` + shipper_fees + `", `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
 		`"tc_text": "` + tc_text + `", `+ 
@@ -1200,10 +1215,10 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"sellerBank_sign": "` + sellerBank_sign + `", `+ 
 		`"industry": "` + industry + `" `+
 		`}`
-		fmt.Println("order: " + order)
-		fmt.Print("order in bytes array: ")
-		fmt.Println([]byte(order))
-	err = stub.PutState(agreementId, []byte(order))									//store Agreement with agreementId as key
+		fmt.Println("input: " + input)
+		fmt.Print("input in bytes array: ")
+		fmt.Println([]byte(input))
+	err = stub.PutState(agreementId, []byte(input))									//store Agreement with agreementId as key
 	if err != nil {
 		return nil, err
 	}
@@ -1359,7 +1374,7 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 		} else if res.SB_name == user {
 			if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
 					res.SellerBank_sign = "true";
-					str = "Seller Bank  Signature"
+					str = "Seller Bank Signature"
 			}
 		}
 	}else{
@@ -1372,7 +1387,7 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	}
 	
 	//build the Agreement json string manually
-	order := 	`{`+
+	input := 	`{`+
 		`"agreementId": "` + res.AgreementID + `" , `+
 		`"transId": "` + res.TransID + `" , `+ 
 		`"agreement_status": "` + res.Agreement_status + `" , `+ 
@@ -1387,6 +1402,9 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 		`"item_name": "` + res.Item_name + `" , `+ 
 		`"item_quantity": "` + res.Item_quantity + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
+		`"delivery_date": "` + res.Delivery_date + `" , `+ 
+		`"late_fees": "` + res.Late_fees + `" , `+ 
+		`"shipper_fees": "` + res.Shipper_fees + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
 		`"tc_text" : "` + res.TC_Text + `", `+ 
@@ -1395,7 +1413,7 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 		`"seller_sign": "` + res.Seller_sign + `" , `+ 
 		`"sellerBank_sign" : "` + res.SellerBank_sign + `" `+ 
 		`}`
-	err = stub.PutState(agreementId, []byte(order))									//store Agreement with id as key
+	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
 		return nil, err
 	}
