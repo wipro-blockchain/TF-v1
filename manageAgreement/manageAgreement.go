@@ -51,7 +51,7 @@ type Agreement struct{							// Attributes of a Agreement
 	Item_quantity string `json:"item_quantity"`
 	Total_Value string `json:"total_value"`
 	Delivery_date string `json:"delivery_date"`
-	Late_fees string `json:"late_fees"`
+	ExtraCharges string `json:"extraCharges"`
 	Shipper_fees string `json:"shipper_fees"`
 	DocumentName string `json:"document_name"`
 	DocumentURL string `json:"document_url"`
@@ -61,6 +61,7 @@ type Agreement struct{							// Attributes of a Agreement
 	Seller_sign string `json:"seller_sign"`
 	SellerBank_sign string `json:"sellerBank_sign "`
 	Industry string `json:"industry "`
+	GoodsPrice string `json:"goodsPrice "`
 }
 type Fraud_list struct{
 	FraudID string `json:"fraudId"`	
@@ -943,8 +944,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	var jsonResp string
 	var err error
 	fmt.Println("start update_agreement")
-	if len(args) != 25{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 25 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 26{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 26 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -980,7 +981,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.Item_quantity = args[12]
 		res.Total_Value = args[13]
 		res.Delivery_date = args[14]
-		res.Late_fees = args[15]
+		res.ExtraCharges = args[15]
 		res.Shipper_fees = args[16]
 		res.DocumentName = args[17]
 		res.DocumentURL = args[18]
@@ -990,6 +991,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.Seller_sign = args[22]
 		res.SellerBank_sign = args[23]
 		res.Industry = args[24]
+		res.GoodsPrice = args[25]
 		
 	}else{
 		errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
@@ -1017,16 +1019,17 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		`"item_quantity": "` + res.Item_quantity + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"delivery_date": "` + res.Delivery_date + `" , `+ 
-		`"late_fees": "` + res.Late_fees + `" , `+ 
+		`"extraCharges": "` + res.ExtraCharges + `" , `+ 
 		`"shipper_fees" : "` + res.Shipper_fees + `", `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
-		`"tc_text" : "` + res.TC_Text + `", `+ 
+		`"tc_text" : "` + res.TC_Text + `" , `+ 
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + res.BuyerBank_sign + `" , `+ 
 		`"seller_sign": "` + res.Seller_sign + `" , `+ 
 		`"sellerBank_sign" : "` + res.SellerBank_sign + `" , `+ 
-		`"industry" : "` + res.Industry + `" `+ 
+		`"industry" : "` + res.Industry + `" , `+
+		`"goodsPrice" : "` + res.GoodsPrice + `" `+ 
 		`}`
 	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
@@ -1045,8 +1048,8 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 // ============================================================================================================================
 func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 25 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 25 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 26 {
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 26 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -1121,7 +1124,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		item_quantity:= args[12]
 		total_value := args[13]
 		delivery_date := args[14]
-		late_fees := args[15]
+		extraCharges := args[15]
 		shipper_fees := args[16]
 		document_name := args[17]
 		document_url := args[18]
@@ -1131,6 +1134,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		seller_sign := args[22]
 		sellerBank_sign := args[23]
 		industry := args[24]
+		goodsPrice := args[25]
 		
 		fmt.Println("Checking fraud list...");
 
@@ -1204,16 +1208,17 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		`"item_quantity": "` + item_quantity + `" , `+ 
 		`"total_value": "` + total_value + `" , `+ 
 		`"delivery_date": "` + delivery_date + `" , `+ 
-		`"late_fees": "` + late_fees + `" , `+ 
+		`"extraCharges": "` + extraCharges + `" , `+ 
 		`"shipper_fees": "` + shipper_fees + `", `+ 
 		`"document_name": "` + document_name + `" , `+ 
 		`"document_url": "` + document_url + `" , `+ 
-		`"tc_text": "` + tc_text + `", `+ 
+		`"tc_text": "` + tc_text + `" , `+ 
 		`"buyer_sign": "` + buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + buyerBank_sign + `" , `+ 
 		`"seller_sign": "` + seller_sign + `" , `+ 
 		`"sellerBank_sign": "` + sellerBank_sign + `", `+ 
-		`"industry": "` + industry + `" `+
+		`"industry": "` + industry + `" , `+
+		`"goodsPrice": "` + goodsPrice + `" `+
 		`}`
 		fmt.Println("input: " + input)
 		fmt.Print("input in bytes array: ")
@@ -1403,15 +1408,17 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 		`"item_quantity": "` + res.Item_quantity + `" , `+ 
 		`"total_value": "` + res.Total_Value + `" , `+ 
 		`"delivery_date": "` + res.Delivery_date + `" , `+ 
-		`"late_fees": "` + res.Late_fees + `" , `+ 
+		`"extraCharges": "` + res.ExtraCharges + `" , `+ 
 		`"shipper_fees": "` + res.Shipper_fees + `" , `+ 
 		`"document_name": "` + res.DocumentName + `" , `+ 
 		`"document_url": "` + res.DocumentURL + `" , `+ 
-		`"tc_text" : "` + res.TC_Text + `", `+ 
+		`"tc_text" : "` + res.TC_Text + `" , `+ 
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
 		`"buyerBank_sign": "` + res.BuyerBank_sign + `" , `+ 
 		`"seller_sign": "` + res.Seller_sign + `" , `+ 
-		`"sellerBank_sign" : "` + res.SellerBank_sign + `" `+ 
+		`"sellerBank_sign" : "` + res.SellerBank_sign + `" , `+ 
+		`"industry" : "` + res.Industry + `" , `+ 
+		`"goodsPrice" : "` + res.GoodsPrice + `" `+ 
 		`}`
 	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
