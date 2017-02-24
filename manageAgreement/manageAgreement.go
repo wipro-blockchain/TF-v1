@@ -1254,7 +1254,16 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
-	
+	var updateAgreementIndex []string
+	var arg =[]string{agreementId, bb_name, sb_name}
+	updateAgreementAsBytes,err := t.approve_agreement(stub,arg);
+	if err != nil {
+		jsonResp := "{\"Error\":\"Seller approval after creating a new agreement Failed.\"}"
+		return nil, errors.New(jsonResp)
+	}
+	json.Unmarshal(updateAgreementAsBytes, &updateAgreementIndex)
+	fmt.Println("updateAgreementIndex: ")
+	fmt.Println(updateAgreementIndex)
 	fmt.Println("end create_agreement")
 	return nil, nil
 }
@@ -1352,7 +1361,8 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	}
 	// set agreementId
 	agreementId := args[0]
-	user := args[1]
+	bb_name := args[1]
+	sb_name := args[2]
 	//sign := args[2]
 	agreementAsBytes, err := stub.GetState(agreementId)									//get the Agreement for the specified agreementId from chaincode state
 	if err != nil {
@@ -1364,19 +1374,16 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	if res.AgreementID == agreementId{
 		fmt.Println("Agreement found with agreementId : " + agreementId)
 		fmt.Println(res);
-		if res.SellerName == user {
-			res.Seller_sign = "true"
-			str = "Seller Signature"
-		} else if res.BB_name == user {
-			price,err := strconv.Atoi(res.Total_Value)
+		if res.BB_name == bb_name {
+			totalValue,err := strconv.Atoi(res.Total_Value)
 			if err != nil {
 				return nil, errors.New("Error while converting string 'Total_Value' to int ")
 			}
-			if (price <= 10000 && res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+			if (totalValue <= 10000 && res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
 					res.BuyerBank_sign = "true";
 					str = "Buyer Bank Signature"
 			}
-		} else if res.SB_name == user {
+		} else if res.SB_name == sb_name {
 			if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
 					res.SellerBank_sign = "true";
 					str = "Seller Bank Signature"
@@ -1420,6 +1427,7 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 		`"industry" : "` + res.Industry + `" , `+ 
 		`"goodsPrice" : "` + res.GoodsPrice + `" `+ 
 		`}`
+	fmt.Println("input: "+input)
 	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
 		return nil, err
@@ -1429,6 +1437,6 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	if err != nil {
 		return nil, err
 	} 
-	fmt.Println("end update_agreement")
+	fmt.Println("end approve_agreement")
 	return nil, nil
 }
