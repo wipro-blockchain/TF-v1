@@ -453,9 +453,9 @@ func (t *ManagePayment) updateBalance(stub shim.ChaincodeStubInterface, transfer
 	//build the Account json string manually
 	account := `{`+
 		`"buyerAccountNumber" : "` +  BuyerAccountNumber  + `", `+
-		`"buyerAccountBalance" : "` + strconv.FormatFloat(buyerAccountBalance, 'E', -1, 64)   + `", `+
+		`"buyerAccountBalance" : "` + strconv.FormatFloat(buyerAccountBalance, 'f', 2, 64)   + `", `+
 		`"sellerAccountNumber" : "` +  SellerAccountNumber  + `", `+
-		`"sellerAccountBalance" : "` + strconv.FormatFloat(sellerAccountBalance, 'E', -1, 64)   + `"`+
+		`"sellerAccountBalance" : "` + strconv.FormatFloat(sellerAccountBalance, 'f', 2, 64)   + `" `+
 		`}`
 	fmt.Println("In updateBalance account to commit::" + account)
 
