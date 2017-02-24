@@ -1,4 +1,4 @@
-/*/*
+/*
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -145,8 +145,6 @@ func (t *ManageAgreement) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.update_agreement(stub, args)
 	}else if function == "update_fraud_list" {									//update an Agreement
 		return t.update_fraud_list(stub, args)
-	}else if function == "approve_agreement" {									//approve an Agreement
-		return t.approve_agreement(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)					//error
 	errMsg := "{ \"message\" : \"Received unknown function invocation\", \"code\" : \"503\"}"
@@ -1057,58 +1055,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		return nil, nil
 	}
 	fmt.Println("start create_agreement")
-	/*if len(args[0]) <= 0 {
-		return nil, errors.New("1st argument must be a non-empty string")
-	}
-	if len(args[1]) <= 0 {
-		return nil, errors.New("2nd argument must be a non-empty string")
-	}
-	if len(args[2]) <= 0 {
-		return nil, errors.New("3rd argument must be a non-empty string")
-	}
-	if len(args[3]) <= 0 {
-		return nil, errors.New("4th argument must be a non-empty string")
-	}
-	if len(args[4]) <= 0 {
-		return nil, errors.New("5th argument must be a non-empty string")
-	}
-	if len(args[5]) <= 0 {
-		return nil, errors.New("6th argument must be a non-empty string")
-	}
-	if len(args[6]) <= 0 {
-		return nil, errors.New("7th argument must be a non-empty string")
-	}
-	if len(args[7]) <= 0 {
-		return nil, errors.New("8th argument must be a non-empty string")
-	}
-	if len(args[8]) <= 0 {
-		return nil, errors.New("9th argument must be a non-empty string")
-	}
-	if len(args[9]) <= 0 {
-		return nil, errors.New("10th argument must be a non-empty string")
-	}
-	if len(args[10]) <= 0 {
-		return nil, errors.New("11th argument must be a non-empty string")
-	}
-	if len(args[11]) <= 0 {
-		return nil, errors.New("12th argument must be a non-empty string")
-	}
-	if len(args[12]) <= 0 {
-		return nil, errors.New("13th argument must be a non-empty string")
-	}
-	if len(args[13]) <= 0 {
-		return nil, errors.New("14th argument must be a non-empty string")
-	}
-	if len(args[14]) <= 0 {
-		return nil, errors.New("15th argument must be a non-empty string")
-	}
-	if len(args[15]) <= 0 {
-		return nil, errors.New("16th argument must be a non-empty string")
-	}
-	if len(args[16]) <= 0 {
-		return nil, errors.New("17th argument must be a non-empty string")
-		}*/
-		
+	
 		agreementId := args[0]
 		transId := args[1]
 		agreement_status := args[2]
@@ -1171,6 +1118,18 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 			return nil, nil
 		}
 		fmt.Println("Checked fraud list successfully.");
+		totalValue,err := strconv.Atoi(total_value)
+		if err != nil {
+			return nil, errors.New("Error while converting string 'total_value' to int ")
+		}
+		if (totalValue <= 10000 && industry == "Books" || industry == "Mobiles & Tablets"){
+			buyerBank_sign = "true";
+			//buyerBankStr := "Buyer Bank Signature"
+		}
+		if (industry == "Books" || industry == "Mobiles & Tablets"){
+			sellerBank_sign = "true";
+			//sellerBankStr := "Seller Bank Signature"
+		}
 		agreementAsBytes, err := stub.GetState(agreementId)
 		if err != nil {
 			return nil, errors.New("Failed to get Agreement ID")
@@ -1254,7 +1213,8 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
-	var updateAgreementIndex []string
+
+	/*var updateAgreementIndex []string
 	var arg =[]string{agreementId, bb_name, sb_name}
 	updateAgreementAsBytes,err := t.approve_agreement(stub,arg);
 	if err != nil {
@@ -1263,7 +1223,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	}
 	json.Unmarshal(updateAgreementAsBytes, &updateAgreementIndex)
 	fmt.Println("updateAgreementIndex: ")
-	fmt.Println(updateAgreementIndex)
+	fmt.Println(updateAgreementIndex)*/
 	fmt.Println("end create_agreement")
 	return nil, nil
 }
@@ -1347,8 +1307,8 @@ func (t *ManageAgreement) update_fraud_list(stub shim.ChaincodeStubInterface, ar
 	fmt.Println("Fraud list updated successfully.")
 	return nil, nil
 }
-func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp , str string
+/*func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	/*var jsonResp , str string
 	var err error
 	fmt.Println("start approve_agreement")
 	if len(args) != 3{
@@ -1373,7 +1333,7 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	json.Unmarshal(agreementAsBytes, &res)
 	if res.AgreementID == agreementId{
 		fmt.Println("Agreement found with agreementId : " + agreementId)
-		fmt.Println(res);
+		fmt.Println("res: "+res);
 		if res.BB_name == bb_name {
 			totalValue,err := strconv.Atoi(res.Total_Value)
 			if err != nil {
@@ -1396,10 +1356,10 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 			return nil, err
 		} 
 		return nil, nil
-	}
+	}*/
 	
 	//build the Agreement json string manually
-	input := 	`{`+
+	/*input := 	`{`+
 		`"agreementId": "` + res.AgreementID + `" , `+
 		`"transId": "` + res.TransID + `" , `+ 
 		`"agreement_status": "` + res.Agreement_status + `" , `+ 
@@ -1431,12 +1391,12 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	err = stub.PutState(agreementId, []byte(input))									//store Agreement with id as key
 	if err != nil {
 		return nil, err
-	}
-	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"" + str + " updated succcessfully\", \"code\" : \"200\"}"
+	}*/
+	/*tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"" + str + " updated succcessfully\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
 		return nil, err
 	} 
 	fmt.Println("end approve_agreement")
 	return nil, nil
-}
+}*/
