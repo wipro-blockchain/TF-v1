@@ -1351,8 +1351,8 @@ func (t *ManageAgreement) approve_agreement(stub shim.ChaincodeStubInterface, ar
 	var jsonResp , str string
 	var err error
 	fmt.Println("start approve_agreement")
-	if len(args) != 2{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 2 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 3{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 3 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
