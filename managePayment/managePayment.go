@@ -34,7 +34,11 @@ import (
 type ManagePayment struct {
 }
 
-var PaymentIndexStr = "_PaymentIndex"				//name for the key/value that will store a list of all known payments
+var PaymentIndexStr = "_PaymentIndex"	//name for the key/value that will store a list of all known payments
+
+var AccountIndexStr = "_AccountIndex"	//name for the key/value that will store a list of all known accounts
+var BuyerAccountNumber = "965832147012"
+var SellerAccountNumber = "741258963512"
 
 type Payment struct{
 	PaymentID string `json:"paymentId"`					//the fieldtags are needed to keep case from bouncing around
@@ -52,7 +56,12 @@ type Payment struct{
 	SB_name string `json:"sb_name"`
 }
 
-
+type AccountInfo struct{
+	BuyerAccountNumber string `json:"buyerAccountNumber"`
+	BuyerAccountBalance string `json:"buyerAccountBalance"`
+	SellerAccountNumber string `json:"sellerAccountNumber"`
+	SellerAccountBalance string `json:"sellerAccountBalance"`
+}
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -67,7 +76,7 @@ func main() {
 // Init - reset all the things
 // ============================================================================================================================
 func (t *ManagePayment) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	var msg string
+	var balance string
 	var err error
 
 	if len(args) != 1 {
@@ -80,11 +89,18 @@ func (t *ManagePayment) Init(stub shim.ChaincodeStubInterface, function string, 
 	}
 	// Initialize the chaincode
 	
-	msg = args[0]
+	balance = args[0]
 	fmt.Println("ManagePayment chaincode is deployed successfully.")
 
-	// Write the state to the ledger
-	err = stub.PutState("abc", []byte(msg))				//making a test var "abc" to read/write check right away to test the network
+	//build the Account json string manually
+	account := `{`+
+		`"buyerAccountNumber" : "` +  BuyerAccountNumber  + `", `+
+		`"buyerAccountBalance" : "` + balance   + `", `+
+		`"sellerAccountNumber" : "` +  SellerAccountNumber  + `", `+
+		`"sellerAccountBalance" : "` + balance   + `"`+
+		`}`
+
+	err = stub.PutState(AccountIndexStr, []byte(account))			//store Account with id as key
 	if err != nil {
 		return nil, err
 	}
@@ -152,6 +168,8 @@ func (t *ManagePayment) Query(stub shim.ChaincodeStubInterface, function string,
 		return t.getPaymentBySeller(stub, args)
 	} else if function == "getAllPayment" {													//read a variable
 		return t.getAllPayment(stub, args)
+	} else if function == "getAccountDetails" {													//read a variable
+		return t.getAccountDetails(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)						//error
 
@@ -384,6 +402,72 @@ func (t *ManagePayment) getAllPayment(stub shim.ChaincodeStubInterface, args []s
 											//send it onward
 }
 // ============================================================================================================================
+//  getAccountDetails - get account details from chaincode
+// ============================================================================================================================
+func (t *ManagePayment) getAccountDetails(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var err error
+	fmt.Println("start getAccountDetails")
+	
+	accountAsBytes, err := stub.GetState(AccountIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get Account index")
+	}
+	fmt.Print("accountAsBytes : ")
+	fmt.Println(accountAsBytes)
+	
+	fmt.Println("end getAccountDetails")
+	return accountAsBytes, nil													//send it onward
+}
+// ============================================================================================================================
+//  updateBalance - updates balance for accounts into chaincode
+// ============================================================================================================================
+func (t *ManagePayment) updateBalance(stub shim.ChaincodeStubInterface, transferAmt string) ([]byte, error) {
+	
+	var accountIndex AccountInfo
+	var err error
+	fmt.Println("start updateBalance")
+	
+	transferAmount, _ := strconv.ParseFloat(transferAmt, 64)
+	fmt.Println("In updateBalance with transferAmount::")
+	fmt.Println(transferAmount)
+
+	//Get State
+	accountAsBytes, err := stub.GetState(AccountIndexStr)			//get the var from chaincode state
+	if err != nil {
+		errMsg := "{ \"message\" : \"Error while fetching Accounts.\", \"code\" : \"503\"}"
+		err = stub.SetEvent("errEvent", []byte(errMsg))
+		if err != nil {
+			return nil, err
+		} 
+		return nil, nil
+	}
+	json.Unmarshal(accountAsBytes, &accountIndex)
+	accountBuyerBal, _ := strconv.ParseFloat(accountIndex.BuyerAccountBalance, 64)
+	accountSellerBal, _ := strconv.ParseFloat(accountIndex.SellerAccountBalance, 64)
+	buyerAccountBalance	:= accountBuyerBal - transferAmount
+	sellerAccountBalance := accountSellerBal + transferAmount
+	fmt.Println("In updateBalance after balance calculation::")
+	fmt.Println(buyerAccountBalance)
+	fmt.Println(sellerAccountBalance)
+	
+	//build the Account json string manually
+	account := `{`+
+		`"buyerAccountNumber" : "` +  BuyerAccountNumber  + `", `+
+		`"buyerAccountBalance" : "` + strconv.FormatFloat(buyerAccountBalance, 'E', -1, 64)   + `", `+
+		`"sellerAccountNumber" : "` +  SellerAccountNumber  + `", `+
+		`"sellerAccountBalance" : "` + strconv.FormatFloat(sellerAccountBalance, 'E', -1, 64)   + `"`+
+		`}`
+	fmt.Println("In updateBalance account to commit::" + account)
+
+	err = stub.PutState(AccountIndexStr, []byte(account))			//store Account with id as key
+	if err != nil {
+		return nil, err
+	}
+	
+	fmt.Println("end updateBalance")
+	return nil, nil													//send it onward
+}
+// ============================================================================================================================
 // Delete - remove a Payment from state
 // ============================================================================================================================
 func (t *ManagePayment) deletePayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -509,10 +593,16 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 		`"sb_name" : "` + res.SB_name   + `"`+
 		`}`
 
+	if res.BuyerBank_sign == "true"{
+		fmt.Println("Buyer Bank sign is true with amount to be transferred :: " + res.AmountTransferred)
+		t.updateBalance(stub, res.AmountTransferred)
+	}
+
 	err = stub.PutState(paymentId, []byte(order))									//store Payment with id as key
 	if err != nil {
 		return nil, err
 	}
+
 	tosend := "{ \"paymentID\" : \""+paymentId+"\", \"message\" : \"Payment updated succcessfully\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
@@ -572,8 +662,8 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	agreementId := args[1]
 	buyerName := args[2]
 	sellerName := args[3]
-	buyerAccount := "965832147012"
-	sellerAccount := "741258963512"
+	buyerAccount := BuyerAccountNumber
+	sellerAccount := SellerAccountNumber
 	amountTransferred := args[4]
 	paymentCUDate := args[5]
 	paymentStatus := args[6]
@@ -648,6 +738,7 @@ func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []s
 	if err != nil {
 		return nil, err
 	}
+
 	tosend := "{ \"paymentID\" : \""+paymentId+"\", \"message\" : \"Payment created succcessfully\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
