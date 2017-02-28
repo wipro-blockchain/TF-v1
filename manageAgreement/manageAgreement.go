@@ -1122,7 +1122,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		if err != nil {
 			return nil, errors.New("Error while converting string 'total_value' to int ")
 		}
-		if (totalValue <= 10000 || industry == "Books" || industry == "Mobiles & Tablets"){
+		if (totalValue <= 10000 && industry == "Books" || industry == "Mobiles & Tablets"){
 			buyerBank_sign = "true";
 			//buyerBankStr := "Buyer Bank Signature"
 		}
@@ -1130,6 +1130,14 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 			sellerBank_sign = "true";
 			//sellerBankStr := "Seller Bank Signature"
 		}
+		if(buyerBank_sign == "true" && sellerBank_sign == "true"){
+			agreement_status = "Approved By Seller Bank"
+		}else if(buyerBank_sign == "true" && sellerBank_sign == "false"){
+			agreement_status = "Approved By Buyer Bank"
+		}else if(buyerBank_sign == "false" && sellerBank_sign == "false"){
+			agreement_status = "Approved By Seller"
+		}
+
 		agreementAsBytes, err := stub.GetState(agreementId)
 		if err != nil {
 			return nil, errors.New("Failed to get Agreement ID")
