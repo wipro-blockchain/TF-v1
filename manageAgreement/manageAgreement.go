@@ -1134,7 +1134,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 			agreement_status = "Approved By Seller Bank"
 		}else if(buyerBank_sign == "true" && sellerBank_sign == "false"){
 			agreement_status = "Approved By Buyer Bank"
-		}else if(buyerBank_sign == "false" && sellerBank_sign == "false"){
+		}else if(buyerBank_sign == "false" && sellerBank_sign == "false" && seller_sign == "true"){
 			agreement_status = "Approved By Seller"
 		}
 
@@ -1216,6 +1216,7 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
+
 	tosend := "{ \"agreementID\" : \""+agreementId+"\", \"message\" : \"Agreement created succcessfully\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
 	if err != nil {
