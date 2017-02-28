@@ -617,8 +617,8 @@ func (t *ManagePayment) updatePayment(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManagePayment) createPayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 13 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 13 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 11 {
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 11 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
