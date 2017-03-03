@@ -996,7 +996,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		if err != nil {
 			return nil, errors.New("Error while converting string 'total_value' to int ")
 		}
-		if (totalValue <= 10000 && res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+		if (totalValue <= 10000 || res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
 			res.BuyerBank_sign = "true";
 			//buyerBankStr := "Buyer Bank Signature"
 			if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
