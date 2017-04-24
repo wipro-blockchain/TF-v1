@@ -234,18 +234,6 @@ func (t *ManagePO) getPO_byBuyer(stub shim.ChaincodeStubInterface, args []string
 	}
 	jsonResp = jsonResp + "}"
 	fmt.Println("jsonResp : " + jsonResp)
-	if jsonResp == "{}" {
-        fmt.Println("Buyer not found")
-        jsonResp =  "{\"BuyerName\" : \"" + buyerName + "\", \"message\" : \"Buyer not found.\", \"code\" : \"503\"}"
-        errMsg:= "{ \"BuyerName\" : \"" + buyerName + "\", \"message\" : \"Buyer not found.\", \"code\" : \"503\"}"
-        err = stub.SetEvent("errEvent", [] byte(errMsg))
-        if err != nil {
-        	return nil, err
-        }
-    }
-    if strings.Contains(jsonResp,"},}"){
-    	jsonResp = strings.Replace(jsonResp, "},}", "}}", -1)
-    }
 	//fmt.Print("jsonResp in bytes : ")
 	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_byBuyer")
@@ -310,18 +298,6 @@ func (t *ManagePO) getPO_bySeller(stub shim.ChaincodeStubInterface, args []strin
 	
 	jsonResp = jsonResp + "}"
 	fmt.Println("jsonResp : " + jsonResp)
-	if jsonResp == "{}" {
-        fmt.Println("Seller not found")
-        jsonResp =  "{\"SellerName\" : \"" + sellerName + "\", \"message\" : \"Seller not found.\", \"code\" : \"503\"}"
-        errMsg:= "{ \"SellerName\" : \"" + sellerName + "\", \"message\" : \"Seller not found.\", \"code\" : \"503\"}"
-        err = stub.SetEvent("errEvent", [] byte(errMsg))
-        if err != nil {
-        	return nil, err
-        }
-    }
-    if strings.Contains(jsonResp,"},}"){
-    	jsonResp = strings.Replace(jsonResp, "},}", "}}", -1)
-    }
 	//fmt.Print("jsonResp in bytes : ")
 	//fmt.Println([]byte(jsonResp))
 	fmt.Println("end getPO_bySeller")
