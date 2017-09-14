@@ -47,6 +47,7 @@ type PO struct{							// Attributes of a PO
 	Price string `json:"price"`
 	Buyer_sign string `json:"buyer_sign"`
 	Seller_sign string `json:"seller_sign"`
+	Seller_Remarks string `json:"seller_remarks"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for PO management
@@ -422,8 +423,8 @@ func (t *ManagePO) delete_po(stub shim.ChaincodeStubInterface, args []string) ([
 func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	fmt.Println("Updating PO")
-	if len(args) != 12 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 12\", \"code\" : \"503\"}"
+	if len(args) != 13 {
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 13\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -441,13 +442,10 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		} 
 		return nil, nil
 	}
-	//fmt.Print("poAsBytes in update po")
-	//fmt.Println(poAsBytes);
 	res := PO{}
 	json.Unmarshal(poAsBytes, &res)
 	if res.TransID == transId{
 		fmt.Println("PO found with transId : " + transId)
-		//fmt.Println(res);
 		res.SellerName = args[1]
 		res.BuyerName = args[2]
 		res.ExpectedDeliveryDate = args[3]
@@ -459,6 +457,7 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		res.Price = args[9]
 		res.Buyer_sign = args[10]
 		res.Seller_sign = args[11]
+		res.Seller_Remarks = args[12]
 	}else{
 		errMsg := "{ \"message\" : \""+ transId+ " Not Found.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
@@ -469,7 +468,7 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	
 	//build the PO json string manually
-	order := 	`{`+
+	po_json := 	`{`+
 		`"transId": "` + res.TransID + `" , `+
 		`"sellerName": "` + res.SellerName + `" , `+
 		`"buyerName": "` + res.BuyerName + `" , `+
@@ -481,9 +480,10 @@ func (t *ManagePO) update_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_quantity": "` +  res.Item_quantity + `", `+ 
 		`"price": "` + res.Price + `" , `+ 
 		`"buyer_sign": "` + res.Buyer_sign + `" , `+ 
-		`"seller_sign": "` +  res.Seller_sign + `" `+ 
-		`}`
-	err = stub.PutState(transId, []byte(order))									//store PO with id as key
+		`"seller_sign": "` + res.Seller_sign + `" , `+ 
+		`"seller_remarks": "` +  res.Seller_Remarks + `" `+ 
+	`}`
+	err = stub.PutState(transId, []byte(po_json))									//store PO with id as key
 	if err != nil {
 		return nil, err
 	}
@@ -550,20 +550,16 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		price := args[9]
 		buyer_sign := args[10]
 		seller_sign := args[11]
-		
+		seller_remarks := "NA"
+
 		poAsBytes, err := stub.GetState(transId)
 		if err != nil {
 			return nil, errors.New("Failed to get PO transID")
 		}
-	//fmt.Print("poAsBytes: ")
-	//fmt.Println(poAsBytes)
+	
 		res := PO{}
 		json.Unmarshal(poAsBytes, &res)
-	//fmt.Print("res: ")
-	//fmt.Println(res)
 		if res.TransID == transId{
-		//fmt.Println("This PO arleady exists: " + transId)
-		//fmt.Println(res);
 			errMsg := "{ \"message\" : \"This PO arleady exists\", \"code\" : \"503\"}"
 			err := stub.SetEvent("errEvent", []byte(errMsg))
 			if err != nil {
@@ -573,7 +569,7 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 	
 	//build the PO json string manually
-	order := 	`{`+
+	po_json := 	`{`+
 		`"transId": "` + transId + `" , `+
 		`"sellerName": "` + sellerName + `" , `+
 		`"buyerName": "` + buyerName + `" , `+
@@ -585,12 +581,13 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 		`"item_quantity": "` +  item_quantity + `", `+ 
 		`"price": "` + price + `" , `+ 
 		`"buyer_sign": "` + buyer_sign + `" , `+ 
-		`"seller_sign": "` +  seller_sign + `" `+ 
-		`}`
-		//fmt.Println("order: " + order)
-		fmt.Print("order in bytes array: ")
-		fmt.Println([]byte(order))
-	err = stub.PutState(transId, []byte(order))									//store PO with transId as key
+		`"seller_sign": "` + seller_sign + `" , `+ 
+		`"seller_remarks": "` +  seller_remarks + `" `+ 
+	`}`
+	
+	fmt.Print("po_json in bytes array: ")
+	fmt.Println([]byte(po_json))
+	err = stub.PutState(transId, []byte(po_json))									//store PO with transId as key
 	if err != nil {
 		return nil, err
 	}
