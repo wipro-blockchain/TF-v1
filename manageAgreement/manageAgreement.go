@@ -961,6 +961,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 	fmt.Println(agreementAsBytes);
 	res := Agreement{}
 	json.Unmarshal(agreementAsBytes, &res)
+
 	if res.AgreementID == agreementId{
 		fmt.Println("Agreement found with agreementId : " + agreementId)
 		fmt.Println(res);
@@ -991,6 +992,34 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		res.Industry = args[24]
 		res.GoodsPrice = args[25]
 		
+		totalValue,err := strconv.Atoi(res.Total_Value)
+		if err != nil {
+			return nil, errors.New("Error while converting string 'total_value' to int ")
+		}
+
+		// Auto Approval
+		/*if (totalValue <= 10000 || res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+			res.BuyerBank_sign = "true";
+			if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+				res.SellerBank_sign = "true";
+			}
+		}*/
+		if (totalValue <= 10000 && (res.Industry == "Books" || res.Industry == "Mobiles & Tablets")){
+			res.BuyerBank_sign = "true";
+		}
+		if (res.Industry == "Books" || res.Industry == "Mobiles & Tablets"){
+			res.SellerBank_sign = "true";
+		}
+		if(res.BuyerBank_sign == "true" && res.Seller_sign == "false" && res.SellerBank_sign == "false"){
+			res.Agreement_status = "Approved By Buyer Bank"
+		}
+		if(res.BuyerBank_sign == "true" && res.Seller_sign == "true" && res.SellerBank_sign == "false"){
+			res.Agreement_status = "Approved By Seller"
+		}
+		if(res.BuyerBank_sign == "true" && res.Seller_sign == "true" && res.SellerBank_sign == "true"){
+			res.Agreement_status = "Approved By Seller Bank"
+		}
+		
 	}else{
 		errMsg := "{ \"message\" : \""+ agreementId+ " Not Found.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
@@ -999,7 +1028,7 @@ func (t *ManageAgreement) update_agreement(stub shim.ChaincodeStubInterface, arg
 		} 
 		return nil, nil
 	}
-	
+
 	//build the Agreement json string manually
 	input := 	`{`+
 		`"agreementId": "` + res.AgreementID + `" , `+
@@ -1118,25 +1147,6 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 			return nil, nil
 		}
 		fmt.Println("Checked fraud list successfully.");
-		totalValue,err := strconv.Atoi(total_value)
-		if err != nil {
-			return nil, errors.New("Error while converting string 'total_value' to int ")
-		}
-		if (totalValue <= 10000 && industry == "Books" || industry == "Mobiles & Tablets"){
-			buyerBank_sign = "true";
-			//buyerBankStr := "Buyer Bank Signature"
-		}
-		if (industry == "Books" || industry == "Mobiles & Tablets"){
-			sellerBank_sign = "true";
-			//sellerBankStr := "Seller Bank Signature"
-		}
-		if(buyerBank_sign == "true" && sellerBank_sign == "true"){
-			agreement_status = "Approved By Seller Bank"
-		}else if(buyerBank_sign == "true" && sellerBank_sign == "false"){
-			agreement_status = "Approved By Buyer Bank"
-		}else if(buyerBank_sign == "false" && sellerBank_sign == "false" && seller_sign == "true"){
-			agreement_status = "Approved By Seller"
-		}
 
 		agreementAsBytes, err := stub.GetState(agreementId)
 		if err != nil {
@@ -1223,16 +1233,6 @@ func (t *ManageAgreement) create_agreement(stub shim.ChaincodeStubInterface, arg
 		return nil, err
 	}
 
-	/*var updateAgreementIndex []string
-	var arg =[]string{agreementId, bb_name, sb_name}
-	updateAgreementAsBytes,err := t.approve_agreement(stub,arg);
-	if err != nil {
-		jsonResp := "{\"Error\":\"Seller approval after creating a new agreement Failed.\"}"
-		return nil, errors.New(jsonResp)
-	}
-	json.Unmarshal(updateAgreementAsBytes, &updateAgreementIndex)
-	fmt.Println("updateAgreementIndex: ")
-	fmt.Println(updateAgreementIndex)*/
 	fmt.Println("end create_agreement")
 	return nil, nil
 }
